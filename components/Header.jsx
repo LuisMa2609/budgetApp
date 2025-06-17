@@ -6,7 +6,6 @@ const Header = () => {
   return (
     <header className="px-4 py-6 md:py-8 xl:py-9 text-black border-b-2 border-emerald-500">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
         <Link href="/">
           <img
             src="/logo.png"
@@ -15,12 +14,10 @@ const Header = () => {
           />
         </Link>
 
-          {/* desktop nav & hire me button*/}
         <div className="hidden xl:flex items-center gap-8">
           <Nav />
         </div>
 
-        {/* mobile nav */}
         <div className="xl:hidden">
           <MobileNav />
         </div>

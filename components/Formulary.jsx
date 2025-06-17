@@ -1,11 +1,11 @@
 'use client'
-// import { useEffect, useState } from "react";
 import {React, useEffect, useState} from "react";
 import CustomInput from "./assets/CustomInput";
+import { AiOutlineClose } from "react-icons/ai";
 
 const Formulary = ({formId, onDataChange}) => {
-  const[trabajos, setTrabajos] = useState([]);
-  const [trabajo, setTrabajo] = useState([]);
+  const [trabajos, setTrabajos] = useState([]);
+  const [trabajo, setTrabajo] = useState();
   const [perfil, setPerfil] = useState("");
   const [numForm, setNumForm] = useState(1);
   const [formData, setFormData] = useState([]);
@@ -15,9 +15,9 @@ const Formulary = ({formId, onDataChange}) => {
     console.log("si jalo")
   }
   
-  // const workSet = () ={
-  //   console.log("hola")
-  // }
+  useEffect(() => {
+    console.log("trabajos", trabajos)
+  }, [trabajos])
   
   useEffect(() => {
     fetch('/api/trabajos')
@@ -25,20 +25,21 @@ const Formulary = ({formId, onDataChange}) => {
     .then(data => setTrabajos(data))
   }, [])
   
-  // console.log(trabajos)
-  
-        //   <h1>Lista</h1>
-        // <ul>
-        //   {trabajos.map((t, i) => (
-        // // <input key={i}>id: {t.catalogo_id} | Nombre: {t.nombre_catalogo} Linea: {t.linea} {t.herrajes_accesorios} {t.perfiles_aluminio}</input>
-        //     <input type="text" key={i} placeholder={t.nombre} className="border p-2 rounded"/>
-        //   ))}
-        // </ul>
-  
   return (
     <div>
       <form className="border p-6 rounded shadow space-y-6">
-        <span>{formId}</span>
+        <div className="flex  justify-end">
+            <span>{formId}</span>
+            <button
+              type="button"
+              className="self-start text-red-500 hover:text-white border border-red-500 hover:bg-red-700 
+                focus:ring-2 focus:outline-none focus:ring-red-300 font-medium rounded 
+                text-xs px-2 py-1 text-center dark:border-red-500 dark:text-red-500 
+                dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-800"
+            >
+              <AiOutlineClose size={14} />
+            </button>
+        </div>
         {/* Línea, Trabajo, Vidrio, Satin, Tipo de aluminio */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <select className="border p-2 rounded" defaultValue="">
@@ -65,53 +66,41 @@ const Formulary = ({formId, onDataChange}) => {
             <option value="" disabled>Satin</option>
           </select>
         </div>
-        
-
-
-        {/* Perfiles de Aluminio */}
         <div>
-          <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
-
-              {trabajos.map((trab) => (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4" key={trab.id}>
-                  {trab.perfiles.map((perfil) => (
-                    // <CustomInput key={perfil.id} type="text" placeholder={perfil.nombre} className="border p-2 rounded" />
-                    <CustomInput label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre} value="" onChange={() => {}} />
-                    
+          <button type="button" className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition" onClick={() => {console.log(trabajo)}}>wachar trabajo</button>
+          <br />
+        {trabajo !== undefined && trabajo > 0 &&(
+          <> 
+          <span>trabajo: {trabajo}</span>
+            {/* Perfiles de Aluminio */}
+            <div>
+              <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
+                  {trabajos.map((trab) => (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative" key={trab.id}>
+                      {trab.perfiles.map((perfil) => (
+                        <CustomInput label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre} value="" onChange={() => {}} />
+                      ))}
+                    </div>
                   ))}
-                </div>
-              ))}
-              
-          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <input type="text" placeholder="Marco" className="border p-2 rounded" />
-            <input type="text" placeholder="Hoja Ap. Int" className="border p-2 rounded" />
-            <input type="text" placeholder="Contramarco" className="border p-2 rounded" />
-            <input type="text" placeholder="Intermedio" className="border p-2 rounded" />
-          </div> */}
+            </div>
+
+            {/* Herrajes y Accesorios */}
+            <div>
+              <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
+                  {trabajos.map((trab) => (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative" key={trab.id}>
+                      {trab.herrajes.map((herraje) => (
+                        // <CustomInput label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre} value="" onChange={() => {}} />
+                        <CustomInput label={herraje.nombre} key={herraje.id} type="text" name={herraje.nombre} value="" onChange={() => {}} />
+                      ))}
+                    </div>
+                  ))}
+            </div>
+          </>
+        )}
+
         </div>
 
-        {/* Herrajes y Accesorios */}
-        <div>
-          <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
-
-              {trabajos.map((trab) => (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4" key={trab.id}>
-                  {trab.herrajes.map((herraje) => (
-                    <input key={herraje.id} type="text" placeholder={herraje.nombre} className="border p-2 rounded" />
-                  ))}
-                </div>
-              ))}
-
-          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <input type="text" placeholder="Escuadra Ext. Ventana" className="border p-2 rounded" />
-            <input type="text" placeholder="Bisagra Ventana" className="border p-2 rounded" />
-            <input type="text" placeholder="Cierre de presión reversible" className="border p-2 rounded" />
-            <input type="text" placeholder="Otro" className="border p-2 rounded" />
-            <input type="text" placeholder="Empaque Biextruido" className="border p-2 rounded" />
-            <input type="text" placeholder="Calza" className="border p-2 rounded" />
-            <input type="text" placeholder="Tapa Dren" className="border p-2 rounded" />
-          </div> */}
-        </div>
 
         {/* Totales */}
         <div className="mt-6 flex justify-end">
@@ -125,9 +114,6 @@ const Formulary = ({formId, onDataChange}) => {
             />
           </div>
         </div>
-
-
-      
       </form>
     </div>
   );

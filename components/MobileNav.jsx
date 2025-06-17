@@ -19,7 +19,6 @@ const MobileNav = () => {
         <CiMenuFries className="text-[32px] text-emerald-500" />
       </SheetTrigger>
       <SheetContent className="flex flex-col items-center justify-start pt-20">
-        {/* Logo */}
         <div className="mb-16 flex justify-center w-full">
           <Link href="/" className="block">
             <img
@@ -30,7 +29,6 @@ const MobileNav = () => {
           </Link>
         </div>
 
-        {/* Nav */}
         <nav className="flex flex-col items-center gap-6">
           {links.map((link, index) => (
             <Link

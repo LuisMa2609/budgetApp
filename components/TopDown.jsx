@@ -1,6 +1,14 @@
-import React from 'react';
+'use client'
 
-const TopDown = () => {
+import React, { useEffect } from 'react';
+
+const TopDown = ({formLength, newForm}) => {
+  
+  const handleClick = () =>{
+    newForm();
+    console.log("añadir button clicked:", formLength);
+  }
+  
   return (
     <>
       {/* Botones */}
@@ -8,6 +16,7 @@ const TopDown = () => {
         <button
           type="button"
           className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition"
+          onClick={handleClick}
         >
           Añadir
         </button>

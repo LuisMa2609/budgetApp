@@ -19,10 +19,13 @@ function addForm(){
   console.log(formsData);
 }
 
-  function deleteForm(){
+  function deleteForm(formId){
     if (formsData.length>1){
-      setFormData(prevForms => prevForms.slice(0, -1));
-      // console.log(formsData);
+      console.log("deleteForm",formId)
+      console.log("formsData",formsData)
+      setFormsData(prevForms => {
+        return prevForms.filter (form => form.id !== formId)
+      });
     }else{
       console.log("Ya es todo");
     }
@@ -34,8 +37,8 @@ function addForm(){
   }
   
   useEffect(() => {
-    console.log("formsData updated:", formsData);
-    console.log("formsData length:", formsData.length);
+    // console.log("formsData updated:", formsData);
+    // console.log("formsData length:", formsData.length);
   }, [formsData])
   
   return (
@@ -53,6 +56,8 @@ function addForm(){
 
       {formsData.map(formData => (
         <Formulary 
+          formLength={formsData.length}
+          deleteForm={deleteForm}
           key={formData.id}
           formId = {formData.id}
           onDataChange={handleFormData}

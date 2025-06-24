@@ -12,6 +12,10 @@ const links = [
     name: "Historial",
     path: "/history",
   },
+   {
+    name: "AddFormView",
+    path: "/addformview",
+  }
 ];
 
 const Nav = () => {

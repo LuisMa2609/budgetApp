@@ -1,22 +1,12 @@
-'use client'
+import React from 'react';
 
-import React, { useEffect } from 'react';
-
-const TopDown = ({formLength, newForm}) => {
-  
-  const handleClick = () =>{
-    newForm();
-    console.log("añadir button clicked:", formLength);
-  }
-  
+const TopDown = () => {
   return (
-    <>
-      {/* Botones */}
+    <main>
       <div className="flex justify-between mt-6">
         <button
           type="button"
           className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition"
-          onClick={handleClick}
         >
           Añadir
         </button>
@@ -28,7 +18,6 @@ const TopDown = ({formLength, newForm}) => {
         </button>
       </div>
 
-      {/* Totales alineados a la derecha */}
       <div className="mt-6 flex flex-col items-end space-y-2">
         <div className="flex items-center gap-2">
           <label htmlFor="iva">IVA (16%):</label>
@@ -50,7 +39,7 @@ const TopDown = ({formLength, newForm}) => {
           />
         </div>
       </div>
-    </>
+    </main>
   );
 };
 

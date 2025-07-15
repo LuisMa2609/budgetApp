@@ -2,11 +2,14 @@
 
 import React, { useEffect } from 'react';
 
-const TopDown = ({formLength, newForm}) => {
+const TopDown = ({formLength, newForm, guardarFn}) => {
   
   const handleClick = () =>{
     newForm();
-    console.log("añadir button clicked:", formLength);
+  }
+
+  const handleSave = () => {
+    guardarFn();
   }
   
   return (
@@ -20,9 +23,11 @@ const TopDown = ({formLength, newForm}) => {
         >
           Añadir
         </button>
+
         <button
           type="submit"
           className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition"
+          onClick={handleSave}
         >
           Guardar
         </button>

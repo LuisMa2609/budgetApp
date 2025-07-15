@@ -6,18 +6,37 @@ import CustomInput from "./assets/CustomInput";
 
 const Content = () => {
   const [formsData, setFormsData] = useState([
-    {id: 1, trabajoId: null, formfields: {}}
+    {id: 1, trabajoId: null, formfields: {
+        trabajoId: null,
+        nombreTrabajo: '',
+        herrajes: [],
+        perfiles: []
+    }}
   ])
+  const [trabajos, setTrabajos] = useState([]);
+
   const [nextFormId, setNextFormId] = useState(2);
 
-function addForm(){
-  setFormsData(prevForms => [
-    ...prevForms,
-    {id: nextFormId, trabajoId: null, formfields:{}}
-  ]);
-  setNextFormId(prevId => prevId + 1)
-  console.log(formsData);
-}
+  useEffect(() => {
+    const fetchAllTrabajos = async ()=> {
+      try{
+        const res = await fetch('/api/trabajos');
+        const data = await res.json();
+        setTrabajos(data)
+      }catch(error){
+        console.log("Error al cargar trabahis", error)
+      }
+    }
+    fetchAllTrabajos()
+  }, [])
+  
+  function addForm(){
+    setFormsData(prevForms => [
+      ...prevForms,
+      {id: nextFormId, trabajoId: null, formfields:{ }}
+    ]);
+    setNextFormId(prevId => prevId + 1)
+  }
 
   function deleteForm(formId){
     if (formsData.length>1){
@@ -31,12 +50,47 @@ function addForm(){
     }
   }
   
-  function handleFormData(formFieldsData){
-    console.log(formFieldsData);
+  function handleFormData(formId,  name, value, id){
+    console.log("Data received:","formId", formId, "name", name,"value" ,value, "id", id)
 
+    if(id == "trabajo"){
+
+      // Extracted logic to avoid deep nesting
+      // const selectedTrabajo = trabajos.find(trabajo => trabajo.id == formFieldsData.value );
+      setFormsData(prevForms => 
+        prevForms.map(form => 
+          form.id === formId
+            ? { ...form, trabajoId: value
+              // , formfields:{...form.formfields, nombreTrabajo: selectedTrabajo.nombre} 
+            }
+            : form
+        )
+      );
+      
+    }else{
+      // setFormsData(prevForms => {
+      //   prevForms.map(form => 
+      //     form.id === formId ? {...form, formfields: formFieldsData} : form
+      //   )
+      // })
+      console.log("else ")
+    }
+    // console.log(formId, formFieldsData)
+    
+    // setFormsData(prevForms => 
+    //   prevForms.map(form => 
+    //     form.id === formId ? {...form, formfields: formFieldsData} : form
+    //   )
+    // );
+    // console.log(formFieldsData);
+  };
+
+  function guardarFn(){
+    console.log("guardar")
   }
   
   useEffect(() => {
+    // console.log(formsData)
     // console.log("formsData updated:", formsData);
     // console.log("formsData length:", formsData.length);
   }, [formsData])
@@ -52,19 +106,22 @@ function addForm(){
         </div>
       </div>
 
-      <div>Contador de forms: {formsData.length}</div>
+      <div>Contador de forms: {formsData.length}</div>  
 
-      {formsData.map(formData => (
+      {formsData.map(formItem => (
         <Formulary 
+          dataFields ={ formItem.formfields }
+          trabajos={trabajos}
           formLength={formsData.length}
           deleteForm={deleteForm}
-          key={formData.id}
-          formId = {formData.id}
+          key={formItem.id}
+          formId = {formItem.id}
           onDataChange={handleFormData}
         />
       ))}
       
       <TopDown 
+        guardarFn={guardarFn}
         formLength={formsData.length}
         newForm = {addForm}
       />

@@ -7,96 +7,93 @@ import { AiOutlineClose } from "react-icons/ai";
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields}) => {
 
   const [formFields, setFormFields] = useState(dataFields);
-  useEffect(() => {
-    setFormFields(dataFields)
-    console.log(dataFields)
-  },[dataFields])
-  
-  useEffect(() => {
-    const currentWorkId = dataFields.trabajoId
-    console.log("work", currentWorkId)
-    if(currentWorkId !== '0' && trabajos.lenght > 0){
-      const work = trabajos.find(t => String(t.id) === String(currentWorkId));
 
-      if(work){
-
-        const newFormFields= {
-          ...formFields,
-          nombreTrabajo: work.nombre,
-          // herrajes: updatedHerrajes,
-          // perfiles: updatedPerfiles
-        };
-        setFormFields(newFormFields);
-        onDataChange(formId, newFormFields);
-      }
-      else if(currentWorkId === '0'){
-        const newFormFields = {
-          ...formFields,
-          nombreTrabajo: '',
-          herrajes: [],
-          perfiles: []
-        };
-        setFormFields(newFormFields);
-        onDataChange(formId, newFormFields);
-      } else {
-        const newFormFields = {
-          ...formFields,
-          nombreTrabajo: '',
-          herrajes: [],
-          perfiles: []
-        };
-        setFormFields(newFormFields);
-        onDataChange(formId, newFormFields);
-      }
-    }
-  }, [formFields.trabajoId, trabajos, formId, onDataChange])
-
-  const [trabajo, setTrabajo] = useState();
   const [selectedHerrajes, setSelectedHerrajes] = useState([]);
   const [selectedPerfiles, setSelectedPerfiles] = useState([]);
-
+  
+  useEffect(() => {
+    setFormFields(dataFields)
+  },[dataFields])
+  
   const handleInputChange = (e) =>{
-    if(e.target?.id == "trabajo"){
-      const newSelectedWorkId = e.target.value
+    const target = e?.target
+    console.log(e)
+    if(target.id == "trabajo"){
+      if(target.value == "0"){
+          const updatedFormFields = {
+          ...dataFields,
+          trabajoId: '',
+          nombreTrabajo: ''
+        }
+
+        setSelectedHerrajes([]);
+        setSelectedPerfiles([]);
+        setFormFields(updatedFormFields);
+        return
+      }
+      
+      const newSelectedWorkId = target.value
+      const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId );
+
+      setSelectedHerrajes(selectedTrabajo?.herrajes);
+      setSelectedPerfiles(selectedTrabajo?.perfiles);
+
       const updatedFormFields = {
         ...dataFields,
-        trabajoId: newSelectedWorkId
+        trabajoId: newSelectedWorkId,
+        nombreTrabajo: selectedTrabajo?.nombre
       }
-
       setFormFields(updatedFormFields);
+      onDataChange(formId, updatedFormFields);
+      return updatedFormFields;
 
-      // const selectedTrabajo = trabajos.find(trabajo => trabajo.id == e.target.value );
-      // console.log("valores", dataFields)
-      // const { value, id} = e.target;
-      // onDataChange(formId,selectedTrabajo.nombre, value, id)
+    }else if(target.name == "perfil"){
+      const updatedFormFields = {
+        ...formFields,
+        perfiles: {
+          ...formFields.perfiles,
+          [target.id]: target.value === '' ? undefined : target.value
+        }
+      };
+      if (target.value === '')delete updatedFormFields.perfiles[target.id];
+      setFormFields(updatedFormFields)
+      onDataChange(formId, updatedFormFields);
+
+    }else if(target.name == "herraje"){
+      // setFormFields(prev => ({
+      //   ...prev,
+      //   herrajes: {
+      //     ...prev.herrajes,
+      //     [target.id]: target.value
+      //   }
+      // }))
+
+      const updatedFormFields = {
+        ...formFields,
+        herrajes: {
+          ...formFields.herrajes,
+          [target.id]: target.value === '' ? undefined : target.value
+        }
+      };
+      if (target.value === '')delete updatedFormFields.herrajes[target.id];
+      setFormFields(updatedFormFields)
+      onDataChange(formId, updatedFormFields);
       
+      // setFormFields(prev => {
+      //   const updatedHerrajes = {...prev.herrajes};
+      //   if(target.value === ''){
+      //     delete updatedHerrajes[target.id];
+      //   }else{
+      //     updatedHerrajes[target.id] = target.value;
+      //   }
+      //   const updatedFormFields = {...prev, herrajes: updatedHerrajes}
+      //   onDataChange(formId, updatedFormFields)
+      //   return updatedFormFields
+      // })
+
     }
-    
-
-    // const updatedFields = {
-    //   ...formData,
-    //   id:{[name]: value}
-    // };
-    // setFormData(updatedFields);
-
-
   }
 
-  useEffect(() =>{ 
-    console.log("exported variables:", "formId", formId, "formLength",formLength, "trabajos", trabajos, "details", dataFields)
-  })
-  
-  const handleInputChange1 = (e) => {
-    const {name, value} = e.target;
-    const updatedFields = {
-      ...formData,
-      "VALOR":{[name]: value}
-    };
-    setFormData(updatedFields);
-
-    onDataChange(formId, updatedFields);
-  }
-  
   function button(){
     deleteForm(formId);
   }
@@ -104,7 +101,7 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
   return (
     <main className="mt-7 container mx-auto">
       <form className="border p-6 rounded shadow space-y-6">
-        <span>Trabajo seleccionado: { trabajo > 0 && (trabajo)}</span>
+        <span>Trabajo seleccionado: { formFields.nombreTrabajo}</span>
         {formLength > 1 && (
             <div className="flex  justify-end">
                 {/* <span>{formId}</span> */}
@@ -150,9 +147,9 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
           </select>
         </div>
         <div>
-        {trabajo !== undefined && trabajo > 0 &&(
+        {formFields?.trabajoId !== null && formFields?.trabajoId !== '' &&(
           <> 
-          <span>trabajo: {trabajo}</span>
+          <span>trabajo: {formFields.nombreTrabajo}</span>
             {/* Perfiles de Aluminio */}
             <div>
               <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
@@ -165,8 +162,8 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
                     </div>
                   ))} */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="perfil">
-                           {selectedPerfiles.map(perfil => (
-                                <CustomInput type="text" label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre}  onChange={handleInputChange} />
+                           {selectedPerfiles?.map(perfil => (
+                                <CustomInput type="text" label={perfil.nombre} key={perfil.id} id={perfil.id} name="perfil" value={formFields.perfiles?.[perfil.id] || ""} onChange={handleInputChange} />
                           ))}
                     </div>
 
@@ -185,8 +182,8 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
                   ))} */}
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="herraje">
-                          {selectedHerrajes.map(herraje => (
-                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name={herraje.nombre} value="" onChange={handleInputChange} />
+                          {selectedHerrajes?.map(herraje => (
+                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" onChange={e => handleInputChange(e, 'herraje')} />
                           ))}
                     </div>
             </div>

@@ -9,8 +9,8 @@ const Content = () => {
     {id: 1, trabajoId: null, formfields: {
         trabajoId: null,
         nombreTrabajo: '',
-        herrajes: [],
-        perfiles: []
+        herrajes: {},
+        perfiles: {}
     }}
   ])
   const [trabajos, setTrabajos] = useState([]);
@@ -33,7 +33,12 @@ const Content = () => {
   function addForm(){
     setFormsData(prevForms => [
       ...prevForms,
-      {id: nextFormId, trabajoId: null, formfields:{ }}
+      {id: nextFormId, trabajoId: null, formfields:{
+        trabajoId: null,
+        nombreTrabajo: '',
+        herrajes: {},
+        perfiles: {}
+       }}
     ]);
     setNextFormId(prevId => prevId + 1)
   }
@@ -49,48 +54,24 @@ const Content = () => {
       console.log("Ya es todo");
     }
   }
+
+  function handleFormData(formId, formFields) {
+    // console.log("handleFormData received:","formId:", formId, formFields)
+    setFormsData(prevForms =>
+      prevForms.map(form =>
+        form.id === formId
+          ? { ...form, trabajoId: formFields.trabajoId ,formfields: { ...formFields } }
+          : form
+      )
+    );
+}
   
-  function handleFormData(formId,  name, value, id){
-    console.log("Data received:","formId", formId, "name", name,"value" ,value, "id", id)
-
-    if(id == "trabajo"){
-
-      // Extracted logic to avoid deep nesting
-      // const selectedTrabajo = trabajos.find(trabajo => trabajo.id == formFieldsData.value );
-      setFormsData(prevForms => 
-        prevForms.map(form => 
-          form.id === formId
-            ? { ...form, trabajoId: value
-              // , formfields:{...form.formfields, nombreTrabajo: selectedTrabajo.nombre} 
-            }
-            : form
-        )
-      );
-      
-    }else{
-      // setFormsData(prevForms => {
-      //   prevForms.map(form => 
-      //     form.id === formId ? {...form, formfields: formFieldsData} : form
-      //   )
-      // })
-      console.log("else ")
-    }
-    // console.log(formId, formFieldsData)
-    
-    // setFormsData(prevForms => 
-    //   prevForms.map(form => 
-    //     form.id === formId ? {...form, formfields: formFieldsData} : form
-    //   )
-    // );
-    // console.log(formFieldsData);
-  };
-
   function guardarFn(){
     console.log("guardar")
   }
   
   useEffect(() => {
-    // console.log(formsData)
+    console.log(formsData)
     // console.log("formsData updated:", formsData);
     // console.log("formsData length:", formsData.length);
   }, [formsData])

@@ -11,88 +11,126 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
   const [selectedHerrajes, setSelectedHerrajes] = useState([]);
   const [selectedPerfiles, setSelectedPerfiles] = useState([]);
   
+const lineas = [
+  "Línea 1000",
+  "Línea 2000",
+  "Línea 3000",
+  "Línea 4000",
+  "Línea 5000",
+  "Línea 6000",
+  "Línea 7000"
+]
+
+const tiposDeVidrios = [
+  { id: "claro3mm", nombre: "Claro 3mm" },
+  { id: "claro6mm", nombre: "Claro 6mm" },
+  { id: "templado6mm", nombre: "Templado 6mm" },
+  { id: "laminado3+3", nombre: "Laminado 3+3" },
+  { id: "dobleacristalamiento", nombre: "Doble Acristalamiento" },
+  { id: "espejo4mm", nombre: "Espejo 4mm" },
+  { id: "obscuro6mm", nombre: "Obscuro 6mm" }
+];
+
+const acabadosSatin = [
+  { id: "satinado_natural", nombre: "Satinado Natural" },
+  { id: "satinado_mate", nombre: "Satinado Mate" },
+  { id: "satinado_brillante", nombre: "Satinado Brillante" },
+  { id: "satinado_anodizado", nombre: "Satinado Anodizado" }, // Común en aluminio
+  { id: "satinado_translucido", nombre: "Satinado Translúcido" }, // Común en vidrio
+  { id: "satinado_esmaltado", nombre: "Satinado Esmaltado" },
+  { id: "satinado_especial", nombre: "Satinado Especial" }
+];
+
+const tiposDeAluminio = [
+  { id: "aluminio_6061", nombre: "Aluminio 6061 (Estructural)" },
+  { id: "aluminio_6063", nombre: "Aluminio 6063 (Arquitectónico)" }, // Muy común en perfiles
+  { id: "aluminio_7075", nombre: "Aluminio 7075 (Alta Resistencia)" },
+  { id: "aluminio_5052", nombre: "Aluminio 5052 (Resistencia Corrosión)" },
+  { id: "aluminio_3003", nombre: "Aluminio 3003 (Uso General)" },
+  { id: "aluminio_anodizado", nombre: "Aluminio Anodizado" }, // Un acabado, pero a menudo se clasifica como tipo
+  { id: "aluminio_reciclado", nombre: "Aluminio Reciclado" }
+];
+
+  
   useEffect(() => {
     setFormFields(dataFields)
   },[dataFields])
   
-  const handleInputChange = (e) =>{
-    const target = e?.target
-    console.log(e)
-    if(target.id == "trabajo"){
-      if(target.value == "0"){
-          const updatedFormFields = {
-          ...dataFields,
-          trabajoId: '',
-          nombreTrabajo: ''
-        }
-
-        setSelectedHerrajes([]);
-        setSelectedPerfiles([]);
-        setFormFields(updatedFormFields);
-        return
-      }
-      
-      const newSelectedWorkId = target.value
-      const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId );
-
-      setSelectedHerrajes(selectedTrabajo?.herrajes);
-      setSelectedPerfiles(selectedTrabajo?.perfiles);
-
+  const handleTrabajoChange = (target) => {
+    if (target.value == "0") {
       const updatedFormFields = {
         ...dataFields,
-        trabajoId: newSelectedWorkId,
-        nombreTrabajo: selectedTrabajo?.nombre
-      }
+        trabajoId: '',
+        nombreTrabajo: ''
+      };
+      setSelectedHerrajes([]);
+      setSelectedPerfiles([]);
       setFormFields(updatedFormFields);
-      onDataChange(formId, updatedFormFields);
-      return updatedFormFields;
-
-    }else if(target.name == "perfil"){
-      const updatedFormFields = {
-        ...formFields,
-        perfiles: {
-          ...formFields.perfiles,
-          [target.id]: target.value === '' ? undefined : target.value
-        }
-      };
-      if (target.value === '')delete updatedFormFields.perfiles[target.id];
-      setFormFields(updatedFormFields)
-      onDataChange(formId, updatedFormFields);
-
-    }else if(target.name == "herraje"){
-      // setFormFields(prev => ({
-      //   ...prev,
-      //   herrajes: {
-      //     ...prev.herrajes,
-      //     [target.id]: target.value
-      //   }
-      // }))
-
-      const updatedFormFields = {
-        ...formFields,
-        herrajes: {
-          ...formFields.herrajes,
-          [target.id]: target.value === '' ? undefined : target.value
-        }
-      };
-      if (target.value === '')delete updatedFormFields.herrajes[target.id];
-      setFormFields(updatedFormFields)
-      onDataChange(formId, updatedFormFields);
-      
-      // setFormFields(prev => {
-      //   const updatedHerrajes = {...prev.herrajes};
-      //   if(target.value === ''){
-      //     delete updatedHerrajes[target.id];
-      //   }else{
-      //     updatedHerrajes[target.id] = target.value;
-      //   }
-      //   const updatedFormFields = {...prev, herrajes: updatedHerrajes}
-      //   onDataChange(formId, updatedFormFields)
-      //   return updatedFormFields
-      // })
-
+      return;
     }
-  }
+    const newSelectedWorkId = target.value;
+    const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId);
+    setSelectedHerrajes(selectedTrabajo?.herrajes);
+    setSelectedPerfiles(selectedTrabajo?.perfiles);
+    const updatedFormFields = {
+      ...dataFields,
+      trabajoId: newSelectedWorkId,
+      nombreTrabajo: selectedTrabajo?.nombre
+    };
+    setFormFields(updatedFormFields);
+    onDataChange(formId, updatedFormFields);
+    return updatedFormFields;
+  };
+
+  const handlePerfilChange = (target) => {
+    const updatedFormFields = {
+      ...formFields,
+      perfiles: {
+        ...formFields.perfiles,
+        [target.id]: target.value === '' ? undefined : target.value
+      }
+    };
+    if (target.value === '') delete updatedFormFields.perfiles[target.id];
+    setFormFields(updatedFormFields);
+    onDataChange(formId, updatedFormFields);
+  };
+
+  const handleHerrajeChange = (target) => {
+    const updatedFormFields = {
+      ...formFields,
+      herrajes: {
+        ...formFields.herrajes,
+        [target.id]: target.value === '' ? undefined : target.value
+      }
+    };
+    if (target.value === '') delete updatedFormFields.herrajes[target.id];
+    setFormFields(updatedFormFields);
+    onDataChange(formId, updatedFormFields);
+  };
+
+  const handleDefaultChange = (target) => {
+    const { id, value } = target;
+    const updatedFormFields = {
+      ...dataFields,
+      [id]: value
+    };
+    if (value === '0') delete updatedFormFields[id];
+    setFormFields(updatedFormFields);
+    onDataChange(formId, updatedFormFields)
+  };
+
+  const handleInputChange = (e) => {
+    const target = e?.target;
+    if (target.id == "trabajo") {
+      handleTrabajoChange(target);
+    } else if (target.name == "perfil") {
+      handlePerfilChange(target);
+    } else if (target.name == "herraje") {
+      handleHerrajeChange(target);
+    } else {
+      handleDefaultChange(target);
+    }
+  };
 
   function button(){
     deleteForm(formId);
@@ -116,13 +154,16 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
                   <AiOutlineClose size={14} />
                 </button>
             </div>
-          ) 
-        }
+          
+        )}
 
         {/* Línea, Trabajo, Vidrio, Satin, Tipo de aluminio */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <select className="border p-2 rounded" defaultValue="" onChange={handleInputChange}>
-            <option value="" >Línea</option>
+          <select className="border p-2 rounded" id="linea" defaultValue="0" onChange={handleInputChange}>
+            <option value="0" >Línea</option>
+            {lineas.map(linea => (
+              <option key={ linea} value={linea}>{linea}</option>
+            ))}
             {/* opciones */}
           </select>
           <select className="border p-2 rounded" id="trabajo" defaultValue="0"  onChange={handleInputChange}>
@@ -132,18 +173,25 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
             ))}
           </select>
 
-              <select className="border p-2 rounded" defaultValue="0">
+              <select className="border p-2 rounded" id="tipoALuminio" defaultValue="0" onChange={handleInputChange}>
                 <option value="0" >Tipo de aluminio</option>
+                {tiposDeAluminio.map(aluminio => (
+                  <option key={ aluminio.id} value={aluminio.id}>{aluminio.nombre}</option>
+                ))}
                 {/* <option value={perfil.id}>{perfil.nombre}</option> */}
               </select>
 
-          <select className="border p-2 rounded" defaultValue="0" onChange={handleInputChange}>
+          <select className="border p-2 rounded" id="tipoVidrio" defaultValue="0" onChange={handleInputChange}>
             <option value="0" >Tipo de vidrio</option>
-            <option value="1" >Vidrio 1</option>
-            <option value="2" >Vidrio 2</option>
+            {tiposDeVidrios.map(vidrio => (
+              <option value={vidrio.id} key={vidrio.id}>{vidrio.nombre}</option>
+            ))}
           </select>
-          <select className="border p-2 rounded" defaultValue="">
-            <option value="" >Satin</option>
+          <select className="border p-2 rounded" id="tipoSatin" defaultValue="0" onChange={handleInputChange}>
+            <option value="0" >Satin</option>
+            {acabadosSatin.map(satin => (
+              <option value={satin.id} key={satin.id}>{satin.nombre}</option>
+            ))}
           </select>
         </div>
         <div>

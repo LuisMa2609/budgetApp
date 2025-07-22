@@ -24,7 +24,7 @@ const Content = () => {
         const data = await res.json();
         setTrabajos(data)
       }catch(error){
-        console.log("Error al cargar trabahis", error)
+        console.log("Error al cargar trabajos", error)
       }
     }
     fetchAllTrabajos()
@@ -46,7 +46,6 @@ const Content = () => {
   function deleteForm(formId){
     if (formsData.length>1){
       console.log("deleteForm",formId)
-      console.log("formsData",formsData)
       setFormsData(prevForms => {
         return prevForms.filter (form => form.id !== formId)
       });
@@ -56,7 +55,6 @@ const Content = () => {
   }
 
   function handleFormData(formId, formFields) {
-    // console.log("handleFormData received:","formId:", formId, formFields)
     setFormsData(prevForms =>
       prevForms.map(form =>
         form.id === formId

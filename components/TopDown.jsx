@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useEffect } from 'react';
 
 const TopDown = ({formLength, newForm, guardarFn}) => {
@@ -13,8 +12,7 @@ const TopDown = ({formLength, newForm, guardarFn}) => {
   }
   
   return (
-    <>
-      {/* Botones */}
+    <main>
       <div className="flex justify-between mt-6">
         <button
           type="button"
@@ -33,7 +31,6 @@ const TopDown = ({formLength, newForm, guardarFn}) => {
         </button>
       </div>
 
-      {/* Totales alineados a la derecha */}
       <div className="mt-6 flex flex-col items-end space-y-2">
         <div className="flex items-center gap-2">
           <label htmlFor="iva">IVA (16%):</label>
@@ -55,7 +52,7 @@ const TopDown = ({formLength, newForm, guardarFn}) => {
           />
         </div>
       </div>
-    </>
+    </main>
   );
 };
 

@@ -70,8 +70,6 @@ const Content = () => {
   
   useEffect(() => {
     console.log(formsData)
-    // console.log("formsData updated:", formsData);
-    // console.log("formsData length:", formsData.length);
   }, [formsData])
   
   return (

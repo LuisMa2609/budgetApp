@@ -1,8 +1,6 @@
-'use client'
-import {React, useEffect, useState} from "react";
-import CustomInput from "./assets/CustomInput";
+"use client";
+import React, { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
-
 
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields}) => {
 
@@ -40,6 +38,7 @@ const acabadosSatin = [
   { id: "satinado_esmaltado", nombre: "Satinado Esmaltado" },
   { id: "satinado_especial", nombre: "Satinado Especial" }
 ];
+
 
 const tiposDeAluminio = [
   { id: "aluminio_6061", nombre: "Aluminio 6061 (Estructural)" },
@@ -119,6 +118,7 @@ const tiposDeAluminio = [
     onDataChange(formId, updatedFormFields)
   };
 
+  // Function receiver to handle the inputs form data and manage them
   const handleInputChange = (e) => {
     const target = e?.target;
     if (target.id == "trabajo") {
@@ -164,7 +164,6 @@ const tiposDeAluminio = [
             {lineas.map(linea => (
               <option key={ linea} value={linea}>{linea}</option>
             ))}
-            {/* opciones */}
           </select>
           <select className="border p-2 rounded" id="trabajo" defaultValue="0"  onChange={handleInputChange}>
             <option value="0">Trabajo</option>
@@ -178,7 +177,6 @@ const tiposDeAluminio = [
                 {tiposDeAluminio.map(aluminio => (
                   <option key={ aluminio.id} value={aluminio.id}>{aluminio.nombre}</option>
                 ))}
-                {/* <option value={perfil.id}>{perfil.nombre}</option> */}
               </select>
 
           <select className="border p-2 rounded" id="tipoVidrio" defaultValue="0" onChange={handleInputChange}>
@@ -201,14 +199,6 @@ const tiposDeAluminio = [
             {/* Perfiles de Aluminio */}
             <div>
               <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
-                  {/* {trabajos.map((trab) => (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" key={trab.id}>
-                      {
-                      trab.perfiles.map((perfil) => (
-                        <CustomInput label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre} value="" onChange={handleInputChange} />
-                      ))}
-                    </div>
-                  ))} */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="perfil">
                            {selectedPerfiles?.map(perfil => (
                                 <CustomInput type="text" label={perfil.nombre} key={perfil.id} id={perfil.id} name="perfil" value={formFields.perfiles?.[perfil.id] || ""} onChange={handleInputChange} />
@@ -220,15 +210,6 @@ const tiposDeAluminio = [
             {/* Herrajes y Accesorios */}
             <div>
               <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
-                  {/* {trabajos.map((trab) => (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" key={trab.id}>
-                      {trab.herrajes.map((herraje) => (
-                        // <CustomInput label={perfil.nombre} key={perfil.id} id={perfil.id} name={perfil.nombre} value="" onChange={handleInputChange} />
-                        <CustomInput label={herraje.nombre} key={herraje.id} type="text" name={herraje.nombre} value="" onChange={handleInputChange} />
-                      ))}
-                    </div>
-                  ))} */}
-
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="herraje">
                           {selectedHerrajes?.map(herraje => (
                                 <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" onChange={e => handleInputChange(e, 'herraje')} />
@@ -257,5 +238,4 @@ const tiposDeAluminio = [
     </main>
   );
 };
-
 export default Formulary;

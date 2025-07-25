@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import { useState, React, useEffect } from "react";
+import CustomInput from "./assets/CustomInput";
 import { AiOutlineClose } from "react-icons/ai";
 
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields}) => {

@@ -58,7 +58,7 @@ export async function GET(request) {
       
     return Response.json(catalogos);
   }catch(e){
-    console.error("Error", e)
+    console.error("Error, ha ocurrido un error!!", e)
   }
 
   // const results = {

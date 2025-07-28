@@ -65,11 +65,11 @@ const Content = () => {
 }
   
   function guardarFn(){
-    console.log("guardar")
+    console.log("guardar", "data", formsData);
   }
   
   useEffect(() => {
-    console.log(formsData)
+    // console.log(formsData)
   }, [formsData])
   
   return (

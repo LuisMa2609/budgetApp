@@ -213,7 +213,7 @@ const tiposDeAluminio = [
               <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="herraje">
                           {selectedHerrajes?.map(herraje => (
-                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" onChange={e => handleInputChange(e, 'herraje')} />
+                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" onChange={handleInputChange} />
                           ))}
                     </div>
             </div>

@@ -4,8 +4,9 @@ import { NextResponse, NextRequest } from 'next/server'
 
 // define and export the GET handler function
 
-export async function GET() {
+export async function GET(request) {
   // this is going to be my JSON response
+  
   try{
     const [rows] = await pool.query(`
             SELECT 
@@ -57,7 +58,7 @@ export async function GET() {
       
     return Response.json(catalogos);
   }catch(e){
-    console.error("Error", e)
+    console.error("Error, ha ocurrido un error!!", e)
   }
 
   // const results = {

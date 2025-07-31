@@ -1,6 +1,64 @@
+"use client";
+import { useState, useEffect } from "react";
+
 import { FaPlus } from "react-icons/fa6";
 
 function addFormView() {
+  
+const lineas = [
+  "Línea 1000",
+  "Línea 2000",
+  "Línea 3000",
+  "Línea 4000",
+  "Línea 5000",
+  "Línea 6000",
+  "Línea 7000"
+]
+
+const tiposDeVidrios = [
+  { id: "claro3mm", nombre: "Claro 3mm" },
+  { id: "claro6mm", nombre: "Claro 6mm" },
+  { id: "templado6mm", nombre: "Templado 6mm" },
+  { id: "laminado3+3", nombre: "Laminado 3+3" },
+  { id: "dobleacristalamiento", nombre: "Doble Acristalamiento" },
+  { id: "espejo4mm", nombre: "Espejo 4mm" },
+  { id: "obscuro6mm", nombre: "Obscuro 6mm" }
+];
+
+const acabadosSatin = [
+  { id: "satinado_natural", nombre: "Satinado Natural" },
+  { id: "satinado_mate", nombre: "Satinado Mate" },
+  { id: "satinado_brillante", nombre: "Satinado Brillante" },
+  { id: "satinado_anodizado", nombre: "Satinado Anodizado" }, // Común en aluminio
+  { id: "satinado_translucido", nombre: "Satinado Translúcido" }, // Común en vidrio
+  { id: "satinado_esmaltado", nombre: "Satinado Esmaltado" },
+  { id: "satinado_especial", nombre: "Satinado Especial" }
+];
+
+
+const tiposDeAluminio = [
+  { id: "aluminio_6061", nombre: "Aluminio 6061 (Estructural)" },
+  { id: "aluminio_6063", nombre: "Aluminio 6063 (Arquitectónico)" }, // Muy común en perfiles
+  { id: "aluminio_7075", nombre: "Aluminio 7075 (Alta Resistencia)" },
+  { id: "aluminio_5052", nombre: "Aluminio 5052 (Resistencia Corrosión)" },
+  { id: "aluminio_3003", nombre: "Aluminio 3003 (Uso General)" },
+  { id: "aluminio_anodizado", nombre: "Aluminio Anodizado" }, // Un acabado, pero a menudo se clasifica como tipo
+  { id: "aluminio_reciclado", nombre: "Aluminio Reciclado" }
+];
+  
+    useEffect(() => {
+    const fetchAllTrabajos = async ()=> {
+      try{
+        const res = await fetch('/api/trabajos');
+        const data = await res.json();
+        setTrabajos(data)
+      }catch(error){
+        console.log("Error al cargar trabajos", error)
+      }
+    }
+    fetchAllTrabajos()
+  }, [])
+
   return (
     <main className="container mx-auto px-4 py-6">
 
@@ -32,8 +90,11 @@ function addFormView() {
                        dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               >
                 <option value="" disabled>Opciones</option>
-                <option value="perfil1">Linea 1</option>
-                <option value="perfil2">Linea 2</option>
+                {lineas.map((linea) => (
+                  <option key={linea} value={linea}>
+                    {linea}
+                  </option>
+                ))}
               </select>
               <label
                 for="select_perfiles"

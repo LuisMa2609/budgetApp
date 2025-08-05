@@ -65,7 +65,7 @@ const Content = () => {
 }
   
   function guardarFn(){
-    console.log("guardar")
+    console.log("guardar: ", formsData)
   }
   
   useEffect(() => {

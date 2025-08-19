@@ -6,7 +6,6 @@ import { AiOutlineClose } from "react-icons/ai";
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields}) => {
 
   const [formFields, setFormFields] = useState(dataFields);
-
   const [selectedHerrajes, setSelectedHerrajes] = useState([]);
   const [selectedPerfiles, setSelectedPerfiles] = useState([]);
   

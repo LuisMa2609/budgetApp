@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 
 import { FaPlus } from "react-icons/fa6";
 
-function addFormView() {
-  
+const addFormView = () => {
+  const {perfiles, setPerfiles} = useState([])
 const lineas = [
   "Línea 1000",
   "Línea 2000",
@@ -47,16 +47,17 @@ const tiposDeAluminio = [
 ];
   
     useEffect(() => {
-    const fetchAllTrabajos = async ()=> {
+    const fetchAllPerfiles = async ()=> {
       try{
-        const res = await fetch('/api/trabajos');
+        const res = await fetch('/api/perfiles');
         const data = await res.json();
-        setTrabajos(data)
+        console.log(data)
+        setPerfiles(data)
       }catch(error){
-        console.log("Error al cargar trabajos", error)
+        console.log("Error al cargar Perfiles", error)
       }
     }
-    fetchAllTrabajos()
+    fetchAllPerfiles()
   }, [])
 
   return (

@@ -20,11 +20,5 @@ export async function GET(request) {
     console.error("Error, ha ocurrido un error!!", e)
   }
 
-  // const results = {
-  //   message: 'Hello World!',
-  // }
-
-  // response with the JSON object
-
   return NextResponse.json(results)
 }

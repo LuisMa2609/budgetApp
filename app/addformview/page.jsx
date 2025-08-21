@@ -1,64 +1,73 @@
-"use client";
+'use client'
 import { useState, useEffect } from "react";
 
 import { FaPlus } from "react-icons/fa6";
 
-const addFormView = () => {
-  const {perfiles, setPerfiles} = useState([])
-const lineas = [
-  "Línea 1000",
-  "Línea 2000",
-  "Línea 3000",
-  "Línea 4000",
-  "Línea 5000",
-  "Línea 6000",
-  "Línea 7000"
-]
+function addFormView() {
+  const [perfiles, setPerfiles] = useState([]);
+  const [herrajes, setHerrajes] = useState([]);
 
-const tiposDeVidrios = [
-  { id: "claro3mm", nombre: "Claro 3mm" },
-  { id: "claro6mm", nombre: "Claro 6mm" },
-  { id: "templado6mm", nombre: "Templado 6mm" },
-  { id: "laminado3+3", nombre: "Laminado 3+3" },
-  { id: "dobleacristalamiento", nombre: "Doble Acristalamiento" },
-  { id: "espejo4mm", nombre: "Espejo 4mm" },
-  { id: "obscuro6mm", nombre: "Obscuro 6mm" }
-];
+  const lineas = [
+    "Línea 1000",
+    "Línea 2000",
+    "Línea 3000",
+    "Línea 4000",
+    "Línea 5000",
+    "Línea 6000",
+    "Línea 7000"
+  ];
 
-const acabadosSatin = [
-  { id: "satinado_natural", nombre: "Satinado Natural" },
-  { id: "satinado_mate", nombre: "Satinado Mate" },
-  { id: "satinado_brillante", nombre: "Satinado Brillante" },
-  { id: "satinado_anodizado", nombre: "Satinado Anodizado" }, // Común en aluminio
-  { id: "satinado_translucido", nombre: "Satinado Translúcido" }, // Común en vidrio
-  { id: "satinado_esmaltado", nombre: "Satinado Esmaltado" },
-  { id: "satinado_especial", nombre: "Satinado Especial" }
-];
+  const tiposDeVidrios = [
+    { id: "claro3mm", nombre: "Claro 3mm" },
+    { id: "claro6mm", nombre: "Claro 6mm" },
+    { id: "templado6mm", nombre: "Templado 6mm" },
+    { id: "laminado3+3", nombre: "Laminado 3+3" },
+    { id: "dobleacristalamiento", nombre: "Doble Acristalamiento" },
+    { id: "espejo4mm", nombre: "Espejo 4mm" },
+    { id: "obscuro6mm", nombre: "Obscuro 6mm" }
+  ];
 
+  const acabadosSatin = [
+    { id: "satinado_natural", nombre: "Satinado Natural" },
+    { id: "satinado_mate", nombre: "Satinado Mate" },
+    { id: "satinado_brillante", nombre: "Satinado Brillante" },
+    { id: "satinado_anodizado", nombre: "Satinado Anodizado" }, // Común en aluminio
+    { id: "satinado_translucido", nombre: "Satinado Translúcido" }, // Común en vidrio
+    { id: "satinado_esmaltado", nombre: "Satinado Esmaltado" },
+    { id: "satinado_especial", nombre: "Satinado Especial" }
+  ];
 
-const tiposDeAluminio = [
-  { id: "aluminio_6061", nombre: "Aluminio 6061 (Estructural)" },
-  { id: "aluminio_6063", nombre: "Aluminio 6063 (Arquitectónico)" }, // Muy común en perfiles
-  { id: "aluminio_7075", nombre: "Aluminio 7075 (Alta Resistencia)" },
-  { id: "aluminio_5052", nombre: "Aluminio 5052 (Resistencia Corrosión)" },
-  { id: "aluminio_3003", nombre: "Aluminio 3003 (Uso General)" },
-  { id: "aluminio_anodizado", nombre: "Aluminio Anodizado" }, // Un acabado, pero a menudo se clasifica como tipo
-  { id: "aluminio_reciclado", nombre: "Aluminio Reciclado" }
-];
-  
-    useEffect(() => {
-    const fetchAllPerfiles = async ()=> {
+  const tiposDeAluminio = [
+    { id: "aluminio_6061", nombre: "Aluminio 6061 (Estructural)" },
+    { id: "aluminio_6063", nombre: "Aluminio 6063 (Arquitectónico)" }, // Muy común en perfiles
+    { id: "aluminio_7075", nombre: "Aluminio 7075 (Alta Resistencia)" },
+    { id: "aluminio_5052", nombre: "Aluminio 5052 (Resistencia Corrosión)" },
+    { id: "aluminio_3003", nombre: "Aluminio 3003 (Uso General)" },
+    { id: "aluminio_anodizado", nombre: "Aluminio Anodizado" }, // Un acabado, pero a menudo se clasifica como tipo
+    { id: "aluminio_reciclado", nombre: "Aluminio Reciclado" }
+  ];
+
+  useEffect(() => {
+    async function fetchData(){
       try{
-        const res = await fetch('/api/perfiles');
-        const data = await res.json();
-        console.log(data)
-        setPerfiles(data)
+        const [perfilesRes, herrajesRes] = await Promise.all([
+          fetch('/api/perfiles'),
+          fetch('/api/herrajes')
+        ]);
+        const perfilesData = await perfilesRes.json();
+        const herrajesData = await herrajesRes.json();
+        setPerfiles(perfilesData);
+        setHerrajes(herrajesData);
       }catch(error){
-        console.log("Error al cargar Perfiles", error)
+        console.log("Error al cargar los datos: ", error);
       }
     }
-    fetchAllPerfiles()
+    fetchData();
   }, [])
+
+  // useEffect(() => {
+  //   console.log("Data: ", perfiles, herrajes);
+  // }, [perfiles, herrajes]);
 
   return (
     <main className="container mx-auto px-4 py-6">
@@ -122,9 +131,12 @@ const tiposDeAluminio = [
                        rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 
                        dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               >
-                <option value="" disabled>Opciones</option>
-                <option value="perfil1">Perfil 1</option>
-                <option value="perfil2">Perfil 2</option>
+                <option value="0" >Perfiles</option>
+                {perfiles.map((perfil) => (
+                  <option value={perfil.perfil_id} key={perfil.perfil_id}>{perfil.perfil_id} | {perfil.perfil_nombre}</option>
+                ))}
+                {/* <option value="perfil1">Perfil 1</option>
+                <option value="perfil2">Perfil 2</option> */}
               </select>
               <label
                 for="select_perfiles"
@@ -162,9 +174,10 @@ const tiposDeAluminio = [
                        rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 
                        dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               >
-                <option value="" disabled>Opciones</option>
-                <option value="herraje1">Herraje 1</option>
-                <option value="herraje2">Herraje 2</option>
+                <option value="0">Opciones</option>
+                {herrajes.map((herraje) => (
+                  <option value={herraje.herraje_id} key={herraje.herraje_id}>{herraje.herraje_id} | {herraje.herraje_nombre}</option>
+                ))}
               </select>
               <label
                 for="select_herrajes"

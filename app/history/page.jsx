@@ -1,6 +1,26 @@
-"use client";
+'use client';
+import { useState, useEffect } from "react";
 
 function history () {
+  const [budgets, setBudgets] = useState([]);
+  useEffect(() => {
+    const fetchAllbudgets = async ()=> {
+      try{
+        const res = await fetch('/api/budgets');
+        const data = await res.json();
+        setBudgets(data)
+      }catch(error){
+        console.log("Error al cargar presupuestos", error)
+      }
+    }
+    fetchAllbudgets()
+  }, [])
+  
+    useEffect(() => {
+    console.log("Budgets cargados:", budgets);
+    })
+  
+
   return (
     <main className="container mx-auto px-4 py-6">
       <div className="w-full mt-8">

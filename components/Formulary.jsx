@@ -2,6 +2,8 @@
 import { useState, React, useEffect } from "react";
 import CustomInput from "./assets/CustomInput";
 import { AiOutlineClose } from "react-icons/ai";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields}) => {
 
@@ -122,6 +124,7 @@ const tiposDeAluminio = [
   // Function receiver to handle the inputs form data and manage them
   const handleInputChange = (e) => {
     const target = e?.target;
+    console.log(target)
     if (target.id == "trabajo") {
       handleTrabajoChange(target);
     } else if (target.name == "perfil") {
@@ -133,17 +136,31 @@ const tiposDeAluminio = [
     }
   };
 
-  function button(){
+  function handleDelete(){
     deleteForm(formId);
   }
   
   return (
     <main className="mt-7 container mx-auto">
       <form className="border p-6 rounded shadow space-y-6">
-        <span>Trabajo seleccionado: { formFields.nombreTrabajo}</span>
+
+         <div className="flex justify-between">
+          <span>Trabajo seleccionado: {formFields.nombreTrabajo}</span>
+          {formLength > 1 && (
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={handleDelete}
+            >
+              <AiOutlineClose size={14} />
+            </Button>
+          )}
+        </div>
+        
+        {/* <span>Trabajo seleccionado: { formFields.nombreTrabajo}</span>
         {formLength > 1 && (
             <div className="flex  justify-end">
-                {/* <span>{formId}</span> */}
                 <button
                   type="button"
                   className="self-start text-red-500 hover:text-white border border-red-500 hover:bg-red-700 
@@ -156,42 +173,101 @@ const tiposDeAluminio = [
                 </button>
             </div>
           
-        )}
+        )} */}
 
         {/* Línea, Trabajo, Vidrio, Satin, Tipo de aluminio */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <select className="border p-2 rounded" id="linea" defaultValue="0" onChange={handleInputChange}>
+
+          <Select onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Línea" />
+            </SelectTrigger>
+            <SelectContent>
+              {lineas.map((linea) => (
+                <SelectItem key={linea} value={linea}>{linea}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* <select className="border p-2 rounded" id="linea" defaultValue="0" onChange={handleInputChange}>
             <option value="0" >Línea</option>
             {lineas.map(linea => (
               <option key={ linea} value={linea}>{linea}</option>
             ))}
-          </select>
-          <select className="border p-2 rounded" id="trabajo" defaultValue="0"  onChange={handleInputChange}>
+          </select> */}
+
+          <Select value={formFields.nombreTrabajo || "asd"} onValueChange={(value) => handleInputChange({ target: { id: "trabajo", value } })}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Trabajo" />
+            </SelectTrigger>
+            <SelectContent>
+              {trabajos.map((trab) => (
+                <SelectItem key={trab.id} value={trab.id}>{trab.nombre}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* <select className="border p-2 rounded" id="trabajo" defaultValue="0"  onChange={handleInputChange}>
             <option value="0">Trabajo</option>
             {trabajos.map((trab) => (
               <option key={ trab.id} value={trab.id}>{trab.nombre}</option>
             ))}
-          </select>
+          </select> */}
 
-              <select className="border p-2 rounded" id="tipoALuminio" defaultValue="0" onChange={handleInputChange}>
+            <Select onValueChange={(value) => handleInputChange({ target: { id: "tipoALuminio", value } })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tipo de aluminio" />
+              </SelectTrigger>
+              <SelectContent>
+                {tiposDeAluminio.map((aluminio) => (
+                  <SelectItem key={aluminio.id} value={aluminio.id}>{aluminio.nombre}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+              {/* <select className="border p-2 rounded" id="tipoALuminio" defaultValue="0" onChange={handleInputChange}>
                 <option value="0" >Tipo de aluminio</option>
                 {tiposDeAluminio.map(aluminio => (
                   <option key={ aluminio.id} value={aluminio.id}>{aluminio.nombre}</option>
                 ))}
-              </select>
+              </select> */}
 
-          <select className="border p-2 rounded" id="tipoVidrio" defaultValue="0" onChange={handleInputChange}>
+          <Select onValueChange={(value) => handleInputChange({ target: { id: "tipoVidrio", value } })}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Tipo de vidrio" />
+            </SelectTrigger>
+            <SelectContent>
+              {tiposDeVidrios.map((vidrio) => (
+                <SelectItem key={vidrio.id} value={vidrio.id}>{vidrio.nombre}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* <select className="border p-2 rounded" id="tipoVidrio" defaultValue="0" onChange={handleInputChange}>
             <option value="0" >Tipo de vidrio</option>
             {tiposDeVidrios.map(vidrio => (
               <option value={vidrio.id} key={vidrio.id}>{vidrio.nombre}</option>
             ))}
-          </select>
-          <select className="border p-2 rounded" id="tipoSatin" defaultValue="0" onChange={handleInputChange}>
+          </select> */}
+
+          <Select onValueChange={(value) => handleInputChange({ target: { id: "tipoSatin", value } })}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Satin" />
+            </SelectTrigger>
+            <SelectContent>
+              {acabadosSatin.map((satin) => (
+                <SelectItem key={satin.id} value={satin.id}>{satin.nombre}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* <select className="border p-2 rounded" id="tipoSatin" defaultValue="0" onChange={handleInputChange}>
             <option value="0" >Satin</option>
             {acabadosSatin.map(satin => (
               <option value={satin.id} key={satin.id}>{satin.nombre}</option>
             ))}
-          </select>
+          </select> */}
+
         </div>
         <div>
         {formFields?.trabajoId !== null && formFields?.trabajoId !== '' &&(

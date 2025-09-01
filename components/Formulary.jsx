@@ -62,7 +62,7 @@ const tiposDeAluminio = [
     if (target.value == "0") {
       const updatedFormFields = {
         ...dataFields,
-        trabajoId: '',
+        trabajoId: null,
         nombreTrabajo: ''
       };
       setSelectedHerrajes([]);
@@ -70,8 +70,9 @@ const tiposDeAluminio = [
       setFormFields(updatedFormFields);
       return;
     }
-    const newSelectedWorkId = target.value;
+    const newSelectedWorkId = parseInt(target.value, 10);
     const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId);
+    console.log("selectedTrabajo", selectedTrabajo)
     setSelectedHerrajes(selectedTrabajo?.herrajes);
     setSelectedPerfiles(selectedTrabajo?.perfiles);
     const updatedFormFields = {
@@ -124,7 +125,7 @@ const tiposDeAluminio = [
   // Function receiver to handle the inputs form data and manage them
   const handleInputChange = (e) => {
     const target = e?.target;
-    console.log(target)
+    console.log("target.value", target.value)
     if (target.id == "trabajo") {
       handleTrabajoChange(target);
     } else if (target.name == "perfil") {
@@ -177,7 +178,6 @@ const tiposDeAluminio = [
 
         {/* Línea, Trabajo, Vidrio, Satin, Tipo de aluminio */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-
           <Select onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Línea" />
@@ -196,7 +196,7 @@ const tiposDeAluminio = [
             ))}
           </select> */}
 
-          <Select value={formFields.nombreTrabajo || "asd"} onValueChange={(value) => handleInputChange({ target: { id: "trabajo", value } })}>
+          <Select value={formFields.trabajoId || ''} onValueChange={(value) => handleInputChange({ target: { id: "trabajo", value } })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Trabajo" />
             </SelectTrigger>

@@ -1,6 +1,5 @@
 // import the Request and Response classes
 import pool from '@/app/lib/mysql';
-import { Type } from 'lucide-react';
 import { NextResponse, NextRequest } from 'next/server'
 
 export async function GET(request){
@@ -73,9 +72,8 @@ export async function GET(request){
 
 }
 
-export async function POST(request){
+export async function POST(NextRequest){
   const formsData = await request.json();
-  
   // Iterate over each item in the formsData array
   for(const item of formsData){
     const trabajoId = item.trabajoId;
@@ -113,17 +111,15 @@ export async function POST(request){
       "INSERT INTO rel_presupuesto_perfiles (presupuesto_id, perfil_id, quantity) VALUE (?, ?, ?)",
       [presupuestoId, perfil_id, quantity]);
     }
-
-    return NextResponse.json(
-      { message: "Guardado exitosamente", id: result.id},
-      {status: 201}
-    );
   } catch (error){
     console.error("Error al guardar:", error);
     return NextResponse.json({ error: "Error al guardar"}, {status: 500});
   }
 
   }
-
-    return Response.json({received: formsData});
+    
+    return NextResponse.json(
+      { message: "Guardado exitosamente"},
+      {status: 201}
+    );
 }

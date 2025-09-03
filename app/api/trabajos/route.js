@@ -56,7 +56,7 @@ export async function GET(request) {
 
   const catalogos = Array.from(catalogoMap.values());
       
-    return Response.json(catalogos);
+    return NextResponse.json(catalogos, {status : 200});
   }catch(e){
     console.error("Error, ha ocurrido un error!!", e)
   }

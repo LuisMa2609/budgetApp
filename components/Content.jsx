@@ -5,6 +5,12 @@ import TopDown from "./TopDown";
 import CustomInput from "./assets/CustomInput";
 
 const Content = () => {
+  const [trabajos, setTrabajos] = useState([]);
+  const [nextFormId, setNextFormId] = useState(2);
+  const [lineas, setLineas] = useState([]);
+  const [tipoAluminio, setTipoAluminio] = useState([]);
+  const [tipoSatin, setTipoSatin] = useState([]);
+  const [tipoVidrio, setTipoVidrio] = useState([]);
   const [formsData, setFormsData] = useState([
     {id: 1, trabajoId: null, cliente: null , formfields: {
         trabajoId: null,
@@ -13,27 +19,33 @@ const Content = () => {
         perfiles: {}
     }}
   ])
-  const [trabajos, setTrabajos] = useState([]);
-
-  const [nextFormId, setNextFormId] = useState(2);
-
-  const guardar = async (e) => {
-    e.preventDefault();
-    setMensaje("Guardando...");
-  }
 
   useEffect(() => {
-    const fetchAllTrabajos = async ()=> {
+    async function fetchData(){ 
       try{
-        const res = await fetch('/api/trabajos');
-        const data = await res.json();
-        setTrabajos(data)
+        const [trabajosRes, lineaRes, tipoAlumRes, tipoSatinRes, tipoVidrioRes] = await Promise.all([
+          fetch('/api/trabajos'),
+          fetch('/api/linea'),
+          fetch('/api/tipoaluminio'),
+          fetch('/api/tiposatin'),
+          fetch('/api/tipovidrio')
+        ]);
+        const trabajosData = await trabajosRes.json();
+        const lineaData = await lineaRes.json();
+        const tipoAlumData = await tipoAlumRes.json();
+        const tipoSatinData = await tipoSatinRes.json();
+        const tipoVidrioData = await tipoVidrioRes.json();
+        setTrabajos(trabajosData);
+        setLineas(lineaData);
+        setTipoAluminio(tipoAlumData);
+        setTipoSatin(tipoSatinData);
+        setTipoVidrio(tipoVidrioData);
       }catch(error){
-        console.log("Error al cargar trabajos", error)
+        console.log("Eror al cargar los datos", error)
       }
-    }
-    fetchAllTrabajos()
+    } fetchData();
   }, [])
+  
   
   function addForm(){
     setFormsData(prevForms => [
@@ -99,9 +111,13 @@ const Content = () => {
     );
   }
   
-  useEffect(() => {
-    console.log(formsData)
-  }, [formsData])
+  // useEffect(() => {
+  //   console.log(formsData);
+  // }, [formsData])
+
+  //   useEffect(() => {
+  //   console.log({trabajos, lineas, tipoAluminio, tipoSatin, tipoVidrio });
+  // })
   
   return (
     <main className="container mx-auto px-4 py-6">
@@ -125,6 +141,10 @@ const Content = () => {
           key={formItem.id}
           formId = {formItem.id}
           onDataChange={handleFormData}
+          lineas = {lineas}
+          tipoAluminio = {tipoAluminio}
+          tipoSatin = {tipoSatin}
+          tipoVidrio = {tipoVidrio}
         />
       ))}
       

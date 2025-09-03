@@ -62,8 +62,8 @@ export async function GET(request){
       }
 
       const budgets = Array.from(presupuestoMap.values());
-      console.log(budgets);
-    return NextResponse.json({presupuestos: budgets}, {status: 200});
+      // console.log(budgets);
+    return NextResponse.json(budgets, {status: 200});
 
   } catch (error){
     console.error("Error al obtener los presupuestos:", error);
@@ -73,7 +73,7 @@ export async function GET(request){
 }
 
 export async function POST(NextRequest){
-  const formsData = await request.json();
+  const formsData = await NextRequest.json();
   // Iterate over each item in the formsData array
   for(const item of formsData){
     const trabajoId = item.trabajoId;
@@ -83,15 +83,15 @@ export async function POST(NextRequest){
       herrajes,
       perfiles,
       linea,
-      tipoALuminio,
+      tipoAluminio,
       tipoVidrio,
       tipoSatin
     } = item.formfields;
 
       try {
     const [result] = await pool.query(
-      "INSERT INTO presupuesto (trabajo_Id, customer, nombreTrabajo, linea, tipoALuminio, tipoVidrio, tipoSatin) VALUE (?, ?, ?, ?, ?, ?, ?)",
-      [trabajoId, customer, nombreTrabajo, linea, tipoALuminio, tipoVidrio, tipoSatin]
+      "INSERT INTO presupuesto (trabajo_Id, customer, nombreTrabajo, linea, tipoAluminio, tipoVidrio, tipoSatin) VALUE (?, ?, ?, ?, ?, ?, ?)",
+      [trabajoId, customer, nombreTrabajo, linea, tipoAluminio, tipoVidrio, tipoSatin]
     );
 
     const presupuestoId = result.insertId; 
@@ -113,7 +113,7 @@ export async function POST(NextRequest){
     }
   } catch (error){
     console.error("Error al guardar:", error);
-    return NextResponse.json({ error: "Error al guardar"}, {status: 500});
+    return NextResponse.json({ Problemas: "Error al guardar", error}, {status: 500});
   }
 
   }

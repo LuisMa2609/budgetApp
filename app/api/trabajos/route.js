@@ -27,7 +27,7 @@ export async function GET(request) {
       const catalogoMap = new Map();
 
       for (const row of rows) {
-        if (!catalogoMap.has(row.catalogo_id)) {
+        if (!catalogoMap.has(row.catalogo_id)){
           catalogoMap.set(row.catalogo_id, {
             id: row.catalogo_id,
             nombre: row.nombre_catalogo,
@@ -56,7 +56,7 @@ export async function GET(request) {
 
   const catalogos = Array.from(catalogoMap.values());
       
-    return Response.json(catalogos);
+    return NextResponse.json(catalogos, {status : 200});
   }catch(e){
     console.error("Error, ha ocurrido un error!!", e)
   }

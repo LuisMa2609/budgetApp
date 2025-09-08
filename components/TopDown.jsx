@@ -49,6 +49,7 @@ const TopDown = ({formLength, newForm, guardarFn}) => {
             type="text"
             id="total"
             className="w-24 border p-1 rounded text-right"
+            disabled
           />
         </div>
       </div>

@@ -1,21 +1,29 @@
 'use client'
 import { useState, useEffect } from "react";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FaPlus } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
 
 function addFormView() {
   const [perfiles, setPerfiles] = useState([]);
   const [herrajes, setHerrajes] = useState([]);
+  const [lineas, setLineas] = useState([]);
+  const [formData, setFormData] = useState([{
+    linea: null,
+    tipoVidrio: null,
+    herrajes: {},
+    perfiles: {}
+  }])
 
-  const lineas = [
-    "Línea 1000",
-    "Línea 2000",
-    "Línea 3000",
-    "Línea 4000",
-    "Línea 5000",
-    "Línea 6000",
-    "Línea 7000"
-  ];
+  // const lineas = [
+  //   "Línea 1000",
+  //   "Línea 2000",
+  //   "Línea 3000",
+  //   "Línea 4000",
+  //   "Línea 5000",
+  //   "Línea 6000",
+  //   "Línea 7000"
+  // ];
 
   const tiposDeVidrios = [
     { id: "claro3mm", nombre: "Claro 3mm" },
@@ -50,14 +58,17 @@ function addFormView() {
   useEffect(() => {
     async function fetchData(){
       try{
-        const [perfilesRes, herrajesRes] = await Promise.all([
+        const [perfilesRes, herrajesRes, lineasRes] = await Promise.all([
           fetch('/api/perfiles'),
-          fetch('/api/herrajes')
+          fetch('/api/herrajes'),
+          fetch('/api/linea')
         ]);
         const perfilesData = await perfilesRes.json();
         const herrajesData = await herrajesRes.json();
+        const lineasData = await lineasRes.json()
         setPerfiles(perfilesData);
         setHerrajes(herrajesData);
+        setLineas(lineasData);
       }catch(error){
         console.log("Error al cargar los datos: ", error);
       }
@@ -81,7 +92,7 @@ function addFormView() {
       <form className="border p-6 rounded shadow space-y-6">
         {/* Select Línea */}
         <div className="w-[400px]">
-          <Select value={linea} onValueChange={setLinea}>
+          <Select value={formData.linea} onValueChange={() => {}}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona Línea" />
             </SelectTrigger>
@@ -160,7 +171,7 @@ function addFormView() {
               size="icon"
               className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
               aria-label="Agregar perfil"
-              onClick={handleAddPerfil}
+              onClick={() =>{}}
             >
               <FaPlus size={16} />
             </Button>
@@ -202,7 +213,7 @@ function addFormView() {
               size="icon"
               className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
               aria-label="Agregar herraje"
-              onClick={handleAddHerraje}
+              onClick={() => {}}
             >
               <FaPlus size={16} />
             </Button>
@@ -213,4 +224,4 @@ function addFormView() {
   );
 }
 
-export default AddFormView;
+export default addFormView;

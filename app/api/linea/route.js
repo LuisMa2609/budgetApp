@@ -11,7 +11,6 @@ export async function GET(request) {
         l.pulgadas
       FROM linea l
       `);
-
   return NextResponse.json(lineas, {status: 200})
 
   }catch(e){

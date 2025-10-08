@@ -12,7 +12,7 @@ function AddFormView() {
   const [tiposatin, setTipoSatin] = useState([]);
   const [tipovidrio, setTipoVidrio] = useState([]);
   const [numPerfil, setNumPerfil] = useState([1]);
-  const [numHerraje, setNumHerraje] = useState(1);
+  const [numHerraje, setNumHerraje] = useState([1]);
 
   const [formData, setFormData] = useState({
     herrajes: {},
@@ -85,9 +85,16 @@ function AddFormView() {
       prevNumPerfil.length + 1
     ])
   }
+
+  const addHerraje = () =>{
+    setNumHerraje(prevNumHerraje => [
+      ...prevNumHerraje,
+      prevNumHerraje.length + 1
+    ])
+  }
   
   useEffect(() => {
-    console.log("Data: ", formData, numPerfil);
+    console.log("Data: ", formData, numPerfil, numHerraje);
     // console.log("Perfiles: ", perfiles);
     // console.log("Herrajes: ", herrajes);
     // console.log("Lineas: ", lineas);
@@ -199,10 +206,9 @@ function AddFormView() {
           <div className="flex gap-2">
 
           {numPerfil.map(numperfil => (
-            <h1 key={numperfil}>{numperfil}</h1>
-          ))}
-          
-            <div className="relative w-[400px]">
+            // <h1 key={numperfil}>{numperfil}</h1>
+            
+            <div className="relative w-[400px]" key={numperfil}>
               <select
                 id="select_perfiles"
                 defaultValue=""
@@ -229,6 +235,9 @@ function AddFormView() {
                 Perfil
               </label>
             </div>
+            
+          ))}
+          
             <Button
               type="button"
               variant="outline"
@@ -246,7 +255,9 @@ function AddFormView() {
         <div>
           <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
           <div className="flex gap-2">
-            <div className="relative w-[400px]">
+            {numHerraje.map(numherraje => (
+
+            <div className="relative w-[400px]" key={numherraje}>
               <select
                 id="select_herrajes"
                 defaultValue=""
@@ -271,13 +282,17 @@ function AddFormView() {
                 Herraje
               </label>
             </div>
+
+            ))}
+
+
             <Button
               type="button"
               variant="outline"
               size="icon"
               className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
               aria-label="Agregar herraje"
-              onClick={() => {}}
+              onClick={addHerraje}
             >
               <FaPlus size={16} />
             </Button>

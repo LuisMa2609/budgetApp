@@ -3,14 +3,18 @@ import Formulary from "./Formulary";
 import { useState, useEffect } from "react";
 import TopDown from "./TopDown";
 import CustomInput from "./assets/CustomInput";
+import { useSearchParams } from 'next/navigation';
 
 const Content = () => {
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('editId');
   const [trabajos, setTrabajos] = useState([]);
   const [nextFormId, setNextFormId] = useState(2);
   const [lineas, setLineas] = useState([]);
   const [tipoAluminio, setTipoAluminio] = useState([]);
   const [tipoSatin, setTipoSatin] = useState([]);
   const [tipoVidrio, setTipoVidrio] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [formsData, setFormsData] = useState([
     {id: 1, trabajoId: null, cliente: null , formfields: {
         trabajoId: null,
@@ -21,6 +25,35 @@ const Content = () => {
   ])
 
   useEffect(() => {
+    if (editId) {
+      console.log("Edit ID en useEffect:", editId);
+      async function fetchBudgets(){
+        try{
+          const res = await fetch(`/api/budgets/${editId}`);
+          const budgetData = await res.json();
+          setFormsData([
+            {
+              id: 1,
+              trabajoId: budgetData.trabajoId,
+              cliente: budgetData.cliente,
+              formfields: {
+                  trabajoId: budgetData.trabajoId,
+                  nombreTrabajo: budgetData.nombreTrabajo,
+                  herrajes: budgetData.herrajes || {},
+                  perfiles: budgetData.perfiles || {},
+                  linea: budgetData.linea,
+                  tipoAluminio: budgetData.tipoAluminio,
+                  tipoSatin: budgetData.tipoSatin,
+                  tipoVidrio: budgetData.tipoVidrio
+              }
+            }
+          ]);
+        } catch(error){
+          console.log("Error al cargar el presupuesto", error)
+        }
+      }
+      fetchBudgets();
+    }
     async function fetchData(){ 
       try{
         const [trabajosRes, lineaRes, tipoAlumRes, tipoSatinRes, tipoVidrioRes] = await Promise.all([
@@ -44,7 +77,7 @@ const Content = () => {
         console.log("Eror al cargar los datos", error)
       }
     } fetchData();
-  }, [])
+  }, [editId])
   
   
   function addForm(){
@@ -99,6 +132,25 @@ const Content = () => {
         console.log("Error al cargar trabajos", error)
       }
   }
+  
+  async function editarFn(){
+    try{
+      const res = await fetch(`/api/budgets/${editId}`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+          body: JSON.stringify(formsData[0])
+    });
+    const data = await res.json();
+    if( res.status){
+        console.log("Editado exitosamente")
+      }
+    console.log(data);
+    }catch(error){
+      console.log("Error al editar", error)
+    }
+  }
 
   function handleCustomer(e) {
     const value = e.target.value;
@@ -115,9 +167,9 @@ const Content = () => {
   //   console.log(formsData);
   // }, [formsData])
 
-  //   useEffect(() => {
-  //   console.log({trabajos, lineas, tipoAluminio, tipoSatin, tipoVidrio });
-  // })
+    useEffect(() => {
+    console.log(editId);
+  })
   
   return (
     <main className="container mx-auto px-4 py-6">
@@ -149,7 +201,7 @@ const Content = () => {
       ))}
       
       <TopDown 
-        guardarFn={guardarFn}
+        guardarFn={editId ? editarFn : guardarFn}
         formLength={formsData.length}
         newForm = {addForm}
       />

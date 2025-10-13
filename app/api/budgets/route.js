@@ -3,7 +3,11 @@ import pool from '@/app/lib/mysql';
 import { NextResponse, NextRequest } from 'next/server'
 
 export async function GET(request){
-  
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('editId');
+
+  console.log("ID recibido en GET:", request);
+
   try {
     const [rows] = await pool.query(`
       SELECT 
@@ -122,4 +126,32 @@ export async function POST(NextRequest){
       { message: "Guardado exitosamente"},
       {status: 201}
     );
+}
+
+export async function UPDATE(NextRequest){
+  try {
+    const data = await NextRequest.json();
+    const {
+      id, // presupuesto id to update
+      cliente,
+      nombreTrabajo,
+      linea,
+      tipoAluminio,
+      tipoVidrio,
+      tipoSatin
+    } = data;
+
+    // Update presupuesto table
+    await pool.query(
+      `UPDATE presupuesto 
+       SET customer = ?, nombreTrabajo = ?, linea = ?, tipoAluminio = ?, tipoVidrio = ?, tipoSatin = ?
+       WHERE id = ?`,
+      [cliente, nombreTrabajo, linea, tipoAluminio, tipoVidrio, tipoSatin, id]
+    );
+
+    return NextResponse.json({ message: "Presupuesto actualizado correctamente" }, { status: 200 });
+  } catch (error) {
+    console.error("Error al actualizar el presupuesto:", error);
+    return NextResponse.json({ error: "Error al actualizar el presupuesto" }, { status: 500 });
+  }
 }

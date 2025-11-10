@@ -14,10 +14,7 @@ function AddFormView() {
   const [numPerfil, setNumPerfil] = useState([1]);
   const [numHerraje, setNumHerraje] = useState([1]);
 
-  const [formData, setFormData] = useState({
-    herrajes: {},
-    perfiles: {}
-  })
+  const [formData, setFormData] = useState({})
 
   useEffect(() => {
     async function fetchData(){
@@ -51,15 +48,10 @@ function AddFormView() {
   }, [])
 
   const handleInputChange = (e) => {
-    // console.log("handleInputChange")
     const target = e?.target;
     const value = parseInt(target.value)
-    // console.log(e, target, value)
-    // console.log( "value", value)
 
     if (value == "0") {
-      console.log(target, value)
-
       setFormData(prevForm => {
         const deleteObj = {...prevForm.target.id};
         delete deleteObj[target.id]
@@ -70,13 +62,33 @@ function AddFormView() {
       })
       return;
     }
-
     
+    if(target.id == "perfil" || target.id == "herraje"){
+      setFormData(prevForm => {
+        const key = target.id === 'perfil' ? 'perfiles' : 'herrajes';
+        return {
+          ...prevForm,
+          [key]: {
+            ...(prevForm[key]),
+            [target.num]: target.value
+          }
+        };
+      });
+    }else{
     setFormData(prevForm => ({
       ...prevForm,
       [target.id]: value
     }))
-    // setFormData(updatedFormFields)
+    }
+  }
+  
+  const handleTituloChange = (e)=>{
+    const value = e.target.value;
+
+    setFormData(prevForms =>({
+      ...prevForms,
+        TituloTrabajo: value
+      }));
   }
   
   const addPerfil = () =>{
@@ -94,20 +106,14 @@ function AddFormView() {
   }
   
   useEffect(() => {
-    console.log("Data: ", formData, numPerfil, numHerraje);
-    // console.log("Perfiles: ", perfiles);
-    // console.log("Herrajes: ", herrajes);
-    // console.log("Lineas: ", lineas);
-    // console.log("TipoAluminio: ", tipoaluminio);
-    // console.log("TipoSatin: ", tiposatin);
-    // console.log("TipoVidrio: ", tipovidrio);
-  } );
+    console.log("Data: ", formData);
+  },[formData]);
 
   return (
     <main className="container mx-auto px-4 py-6">
       <div className="flex  items-center gap-4 mb-6">
         <div className="relative w-[400px]">
-            <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+            <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value={formData.tittle} onChange={handleTituloChange} />
             <label htmlFor="floating_outlined" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Nombre:</label> 
         </div>
       </div>
@@ -209,9 +215,22 @@ function AddFormView() {
             // <h1 key={numperfil}>{numperfil}</h1>
             
             <div className="relative w-[400px]" key={numperfil}>
-              <select
+
+              <Select onValueChange={(value) => handleInputChange({target: {id: "perfil",num: numperfil , value}})}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Perfiles" />
+                </SelectTrigger>
+                <SelectContent>
+                  {perfiles.map((perfil) => (
+                    <SelectItem value={perfil.perfil_id} key={perfil.perfil_id}>{perfil.perfil_id} | {perfil.perfil_nombre}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {/* <select
                 id="select_perfiles"
                 defaultValue=""
+                onValueChange={(value) => handleInputChange({ target: { id: "perfil" + {numperfil}, value } })}
                 className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent 
                        rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 
                        dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -220,9 +239,9 @@ function AddFormView() {
                 {perfiles.map((perfil) => (
                   <option value={perfil.perfil_id} key={perfil.perfil_id}>{perfil.perfil_id} | {perfil.perfil_nombre}</option>
                 ))}
-                {/* <option value="perfil1">Perfil 1</option>
-                <option value="perfil2">Perfil 2</option> */}
-              </select>
+                <option value="perfil1">Perfil 1</option>
+                <option value="perfil2">Perfil 2</option>
+              </select> */}
               <label
                 htmlFor="select_perfiles"
                 className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 
@@ -258,7 +277,20 @@ function AddFormView() {
             {numHerraje.map(numherraje => (
 
             <div className="relative w-[400px]" key={numherraje}>
-              <select
+
+              <Select onValueChange={(value) => handleInputChange({target: {id: "herraje", num: numherraje, value}})}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Herrajes y accesorios" />
+                </SelectTrigger>
+                <SelectContent>
+                  {herrajes.map((herraje) => (
+                    <SelectItem value={herraje.herraje_id} key={herraje.herraje_id}>{herraje.herraje_id} | {herraje.herraje_nombre}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+            
+              {/* <select
                 id="select_herrajes"
                 defaultValue=""
                 className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent 
@@ -269,7 +301,7 @@ function AddFormView() {
                 {herrajes.map((herraje) => (
                   <option value={herraje.herraje_id} key={herraje.herraje_id}>{herraje.herraje_id} | {herraje.herraje_nombre}</option>
                 ))}
-              </select>
+              </select> */}
               <label
                 htmlFor="select_herrajes"
                 className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 

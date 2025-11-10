@@ -34,7 +34,6 @@ useEffect(() => {
     }
     const newSelectedWorkId = parseInt(target.value, 10);
     const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId);
-    console.log("selectedTrabajo", selectedTrabajo)
     setSelectedHerrajes(selectedTrabajo?.herrajes);
     setSelectedPerfiles(selectedTrabajo?.perfiles);
     const updatedFormFields = {

@@ -6,22 +6,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 
 const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, dataFields, lineas, tipoAluminio, tipoSatin, tipoVidrio}) => {
-
   const [formFields, setFormFields] = useState(dataFields);
-
   const [selectedHerrajes, setSelectedHerrajes] = useState([]);
   const [selectedPerfiles, setSelectedPerfiles] = useState([]);
-  
-useEffect(() => {
-  console.log("formFields", formFields)
-  // console.log("formFields.linea", formFields.linea)
-})
+
+  useEffect(() => {
+    console.log('Formulary: received formFields ->', formFields);
+  })
   
   useEffect(() => {
     setFormFields(dataFields)
   },[dataFields])
-  
+
   const handleTrabajoChange = (target) => {
+    console.log("handleTrabajoChange", target);
+    console.log("handleTrabajoChange triggered with target:", target);
     if (target.value == "0") {
       const updatedFormFields = {
         ...dataFields,
@@ -35,7 +34,6 @@ useEffect(() => {
     }
     const newSelectedWorkId = parseInt(target.value, 10);
     const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId);
-    console.log("selectedTrabajo", selectedTrabajo)
     setSelectedHerrajes(selectedTrabajo?.herrajes);
     setSelectedPerfiles(selectedTrabajo?.perfiles);
     const updatedFormFields = {
@@ -62,6 +60,7 @@ useEffect(() => {
   };
 
   const handleHerrajeChange = (target) => {
+    console.log("test passed handleHerrajeChange")
     const updatedFormFields = {
       ...formFields,
       herrajes: {
@@ -88,15 +87,21 @@ useEffect(() => {
   // Function receiver to handle the inputs form data and manage them
   const handleInputChange = (e) => {
     const target = e?.target;
-    console.log("target.value", target.value)
-    if (target.id == "trabajo") {
-      handleTrabajoChange(target);
-    } else if (target.name == "perfil") {
-      handlePerfilChange(target);
-    } else if (target.name == "herraje") {
-      handleHerrajeChange(target);
-    } else {
-      handleDefaultChange(target);
+    if (!target || target.value == "") return;
+
+    // use a switch to route by id/name
+    switch (true) {
+      case target.id === "trabajo":
+        handleTrabajoChange(target);
+        break;
+      case target.name === "perfil":
+        handlePerfilChange(target);
+        break;
+      case target.name === "herraje":
+        handleHerrajeChange(target);
+        break;
+      default:
+        handleDefaultChange(target);
     }
   };
 
@@ -122,26 +127,10 @@ useEffect(() => {
           )}
         </div>
         
-        {/* <span>Trabajo seleccionado: { formFields.nombreTrabajo}</span>
-        {formLength > 1 && (
-            <div className="flex  justify-end">
-                <button
-                  type="button"
-                  className="self-start text-red-500 hover:text-white border border-red-500 hover:bg-red-700 
-                    focus:ring-2 focus:outline-none focus:ring-red-300 font-medium rounded 
-                    text-xs px-2 py-1 text-center dark:border-red-500 dark:text-red-500 
-                    dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-800"
-                    onClick={button}
-                >
-                  <AiOutlineClose size={14} />
-                </button>
-            </div>
-          
-        )} */}
 
         {/* Línea, Trabajo, Vidrio, Satin, Tipo de aluminio */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <Select value={formFields.linea ?? ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
+          <Select value={formFields.linea || ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Línea" />
             </SelectTrigger>
@@ -151,13 +140,6 @@ useEffect(() => {
               ))}
             </SelectContent>
           </Select>
-
-          {/* <select className="border p-2 rounded" id="linea" defaultValue="0" onChange={handleInputChange}>
-            <option value="0" >Línea</option>
-            {lineas.map(linea => (
-              <option key={ linea} value={linea}>{linea}</option>
-            ))}
-          </select> */}
 
           <Select value={formFields.trabajoId || ''} onValueChange={(value) => handleInputChange({ target: { id: "trabajo", value } })}>
             <SelectTrigger className="w-full">
@@ -170,14 +152,7 @@ useEffect(() => {
             </SelectContent>
           </Select>
 
-          {/* <select className="border p-2 rounded" id="trabajo" defaultValue="0"  onChange={handleInputChange}>
-            <option value="0">Trabajo</option>
-            {trabajos.map((trab) => (
-              <option key={ trab.id} value={trab.id}>{trab.nombre}</option>
-            ))}
-          </select> */}
-
-            <Select value={formFields.tipoAluminio ?? ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoAluminio", value } })}>
+            <Select value={formFields.tipoAluminio || ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoAluminio", value } })}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Tipo de aluminio" />
               </SelectTrigger>
@@ -188,14 +163,7 @@ useEffect(() => {
               </SelectContent>
             </Select>
 
-              {/* <select className="border p-2 rounded" id="tipoALuminio" defaultValue="0" onChange={handleInputChange}>
-                <option value="0" >Tipo de aluminio</option>
-                {tiposDeAluminio.map(aluminio => (
-                  <option key={ aluminio.id} value={aluminio.id}>{aluminio.nombre}</option>
-                ))}
-              </select> */}
-
-          <Select value={formFields.tipoVidrio ?? ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoVidrio", value } })}>
+          <Select value={formFields.tipoVidrio || ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoVidrio", value } })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Tipo de vidrio" />
             </SelectTrigger>
@@ -206,14 +174,7 @@ useEffect(() => {
             </SelectContent>
           </Select>
 
-          {/* <select className="border p-2 rounded" id="tipoVidrio" defaultValue="0" onChange={handleInputChange}>
-            <option value="0" >Tipo de vidrio</option>
-            {tiposDeVidrios.map(vidrio => (
-              <option value={vidrio.id} key={vidrio.id}>{vidrio.nombre}</option>
-            ))}
-          </select> */}
-
-          <Select value={formFields.tipoSatin ?? ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoSatin", value } })}>
+          <Select value={formFields.tipoSatin || ''} onValueChange={(value) => handleInputChange({ target: { id: "tipoSatin", value } })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Satin" />
             </SelectTrigger>
@@ -223,13 +184,6 @@ useEffect(() => {
               ))}
             </SelectContent>
           </Select>
-
-          {/* <select className="border p-2 rounded" id="tipoSatin" defaultValue="0" onChange={handleInputChange}>
-            <option value="0" >Satin</option>
-            {acabadosSatin.map(satin => (
-              <option value={satin.id} key={satin.id}>{satin.nombre}</option>
-            ))}
-          </select> */}
 
         </div>
         <div>
@@ -241,7 +195,7 @@ useEffect(() => {
               <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="perfil">
                            {selectedPerfiles?.map(perfil => (
-                                <CustomInput type="text" label={perfil.nombre} key={perfil.id} id={perfil.id} name="perfil" value={dataFields.linea || formFields.perfiles?.[perfil.id] || ""  } onChange={handleInputChange} />
+                                <CustomInput type="text" label={perfil.nombre} key={perfil.id} id={perfil.id} name="perfil" value={formFields.perfiles?.[perfil.id] || ""} onChange={handleInputChange} />
                           ))}
                     </div>
 
@@ -252,7 +206,7 @@ useEffect(() => {
               <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-2 relative" id="herraje">
                           {selectedHerrajes?.map(herraje => (
-                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" onChange={e => handleInputChange(e, 'herraje')} />
+                                <CustomInput type="text" label={herraje.nombre} key={herraje.id} id={herraje.id} name="herraje" value={formFields.herrrajes?.[herraje.id] || ""  } onChange={e => handleInputChange(e, 'herraje')} />
                           ))}
                     </div>
             </div>

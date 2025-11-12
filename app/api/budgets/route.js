@@ -2,77 +2,76 @@
 import pool from '@/app/lib/mysql';
 import { NextResponse, NextRequest } from 'next/server'
 
-export async function GET(request){
-  const { searchParams } = new URL(request.url);
+export async function GET(NextRequest){
+  const { searchParams } = new URL(NextRequest.url);
   const id = searchParams.get('editId');
+  
+  console.log("ID recibido en GET:", id);
 
-  console.log("ID recibido en GET:", request);
+    try {
+      const baseQuery =`
+        SELECT 
+        p.id AS id,
+        p.customer AS cliente,
+        p.linea AS linea,
+        p.nombreTrabajo AS nombreTrabajo,
+        p.tipoALuminio AS tipoALuminio,
+        p.tipoSatin AS tipoSatin,
+        p.tipoVidrio AS tipoVidrio,
+        p.trabajo_id AS trabajoId,
+        h.id as herrajeaccesorio_id,
+        h.nombre as herrajes_accesorios,
+        pr.id as perfil_id,
+        pr.nombre as perfil_nombre
+        FROM presupuesto p 
+        LEFT JOIN rel_presupuesto_herrajes rph ON p.id = rph.presupuesto_id
+        LEFT JOIN herrajesaccesorios h ON rph.herraje_id = h.id
+        LEFT JOIN rel_presupuesto_perfiles rpp ON p.id = rpp.presupuesto_id
+        LEFT JOIN perfilesaluminio pr ON rpp.perfil_id = pr.id
+        `;
+        const query = id ? `${baseQuery} WHERE p.id = ?` : baseQuery;
+        const params = id ? [id] : [];
+        const [rows] = await pool.query(query, params);
 
-  try {
-    const [rows] = await pool.query(`
-      SELECT 
-      p.id AS id,
-      p.customer AS cliente,
-      p.linea AS linea,
-      p.nombreTrabajo AS nombreTrabajo,
-      p.tipoALuminio AS tipoALuminio,
-      p.tipoSatin AS tipoSatin,
-      p.tipoVidrio AS tipoVidrio,
-      p.trabajo_id AS trabajoId,
-      h.id as herrajeaccesorio_id,
-      h.nombre as herrajes_accesorios,
-      pr.id as perfil_id,
-      pr.nombre as perfil_nombre
-      FROM presupuesto p 
-      LEFT JOIN rel_presupuesto_herrajes rph ON p.id = rph.presupuesto_id
-      LEFT JOIN herrajesaccesorios h ON rph.herraje_id = h.id
-      LEFT JOIN rel_presupuesto_perfiles rpp ON p.id = rpp.presupuesto_id
-      LEFT JOIN perfilesaluminio pr ON rpp.perfil_id = pr.id
-      `);
+        const presupuestoMap = new Map();
+        for (const row of rows) {
+          if (!presupuestoMap.has(row.id)) {
+            presupuestoMap.set(row.id, {
+              id: row.id,
+              cliente: row.cliente,
+              linea: row.linea,
+              nombreTrabajo: row.nombreTrabajo,
+              tipoALuminio: row.tipoALuminio,
+              tipoSatin: row.tipoSatin,
+              tipoVidrio: row.tipoVidrio,
+              trabajoId: row.trabajoId,
+              herrajes: [],
+              perfiles: []
+            });
+          }
 
-      const presupuestoMap = new Map();
-
-      for (const row of rows) {
-        if (!presupuestoMap.has(row.id)) {
-          presupuestoMap.set(row.id, {
-            id: row.id,
-            cliente: row.cliente,
-            linea: row.linea,
-            nombreTrabajo: row.nombreTrabajo,
-            tipoALuminio: row.tipoALuminio,
-            tipoSatin: row.tipoSatin,
-            tipoVidrio: row.tipoVidrio,
-            trabajoId: row.trabajoId,
-            herrajes: [],
-            perfiles: []
-          });
+        const item = presupuestoMap.get(row.id);
+          if (row.herrajeaccesorio_id && !item.herrajes.find(h => h.id === row.herrajeaccesorio_id)) {
+            item.herrajes.push({
+              id: row.herrajeaccesorio_id,
+              nombre: row.herrajes_accesorios
+            });
+          }
+          if (row.perfil_id && !item.perfiles.find(p => p.id === row.perfil_id)) {
+            item.perfiles.push({
+              id: row.perfil_id,
+              nombre: row.perfil_nombre
+            });
+          } 
         }
 
-      const item = presupuestoMap.get(row.id);
-
-        if (row.herrajeaccesorio_id && !item.herrajes.find(h => h.id === row.herrajeaccesorio_id)) {
-          item.herrajes.push({
-            id: row.herrajeaccesorio_id,
-            nombre: row.herrajes_accesorios
-          });
-        }
-      
-        if (row.perfil_id && !item.perfiles.find(p => p.id === row.perfil_id)) {
-          item.perfiles.push({
-            id: row.perfil_id,
-            nombre: row.perfil_nombre
-          });
-        } 
-      }
-
-      const budgets = Array.from(presupuestoMap.values());
-      // console.log(budgets);
-    return NextResponse.json(budgets, {status: 200});
-
-  } catch (error){
-    console.error("Error al obtener los presupuestos:", error);
-    return NextResponse.json({ error: "Error al obtener los presupuestos"}, {status: 500});
-  }
+        const budgets = Array.from(presupuestoMap.values());
+        // console.log(budgets);
+      return NextResponse.json(budgets, {status: 200});
+    } catch (error){
+      console.error("Error al obtener los presupuestos:", error);
+      return NextResponse.json({ error: "Error al obtener los presupuestos"}, {status: 500});
+    }
 
 }
 

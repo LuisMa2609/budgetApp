@@ -1,6 +1,6 @@
 'use client'
 import Formulary from "./Formulary";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import TopDown from "./TopDown";
 import CustomInput from "./assets/CustomInput";
 import { useSearchParams } from 'next/navigation';
@@ -23,14 +23,14 @@ const Content = () => {
         perfiles: {}
     }}
   ])
-
+  
   useEffect(() => {
     if (editId) {
-      console.log("Edit ID en useEffect:", editId);
       async function fetchBudgets(){
         try{
-          const res = await fetch(`/api/budgets/${editId}`);
-          const budgetData = await res.json();
+          const res = await fetch(`/api/budgets?editId=${editId}`);
+          const dataArr = await res.json();
+          const budgetData = Array.isArray(dataArr) ? dataArr[0] : dataArr;
           setFormsData([
             {
               id: 1,
@@ -42,7 +42,7 @@ const Content = () => {
                   herrajes: budgetData.herrajes || {},
                   perfiles: budgetData.perfiles || {},
                   linea: budgetData.linea,
-                  tipoAluminio: budgetData.tipoAluminio,
+                  tipoAluminio: budgetData.tipoALuminio,
                   tipoSatin: budgetData.tipoSatin,
                   tipoVidrio: budgetData.tipoVidrio
               }
@@ -54,6 +54,7 @@ const Content = () => {
       }
       fetchBudgets();
     }
+
     async function fetchData(){ 
       try{
         const [trabajosRes, lineaRes, tipoAlumRes, tipoSatinRes, tipoVidrioRes] = await Promise.all([
@@ -77,6 +78,8 @@ const Content = () => {
         console.log("Eror al cargar los datos", error)
       }
     } fetchData();
+
+
   }, [editId])
   
   
@@ -105,13 +108,23 @@ const Content = () => {
   }
 
   function handleFormData(formId, formFields) {
-    setFormsData(prevForms =>
-      prevForms.map(form =>
-        form.id === formId
-          ? { ...form, trabajoId: formFields.trabajoId ,formfields: { ...formFields } }
-          : form
-      )
-    );
+    // console.log('PARENT:onDataChange incoming ->', formId, formFields);
+
+    setFormsData(prev => prev.map(p => {
+      if (p.id !== formId) return p;
+      // console.log('PARENT: before ->', p.formfields);
+      const merged = { ...p.formfields, ...formFields };
+      // console.log('PARENT: after ->', merged);
+      return { ...p, trabajoId: formFields.trabajoId ?? p.trabajoId, formfields: merged };
+    }));
+    
+    // setFormsData(prevForms => 
+    //   prevForms.map(form =>
+    //     form.id === formId
+    //       ? { ...form, trabajoId: formFields.trabajoId ,formfields: { ...formFields } }
+    //       : form
+    //   )
+    // );
 }
   
   async function guardarFn(){
@@ -152,7 +165,7 @@ const Content = () => {
     }
   }
 
-  function handleCustomer(e) {
+  function handleCustomer(e){
     const value = e.target.value;
 
     setFormsData(prevForms =>
@@ -164,29 +177,31 @@ const Content = () => {
   }
   
   // useEffect(() => {
-  //   console.log(formsData);
+  //   // console.log(formsData);
+  //   console.log("CONTENT:", "formsData", formsData);
   // }, [formsData])
 
-    useEffect(() => {
-    console.log(editId);
-  })
+    // useEffect(() => {
+    // // console.log(editId);
+    // console.log("CONTENT:", "formsData", formsData);
+    // })
   
   return (
     <main className="container mx-auto px-4 py-6">
       <div className="flex  items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold">Cliente</h1>
         <div className="relative w-[400px]">
-            <CustomInput label="Presupuesto" name="cliente" value={formsData.cliente} onChange={handleCustomer} />
+            <CustomInput label="Presupuesto" name="cliente" value={formsData[0]?.cliente || ""} onChange={handleCustomer} />
             {/* <input type="text" id="floating_outlined" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
             <label for="floating_outlined" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Presupuesto:</label> */}
         </div>
       </div>
 
-      <div>Contador de forms: {formsData.length}</div>  
+      {/* <div>Contador de forms: {formsData.length}</div>   */}
 
       {formsData.map(formItem => (
         <Formulary 
-          dataFields ={ formItem.formfields }
+          dataFields ={formItem.formfields}
           trabajos={trabajos}
           formLength={formsData.length}
           deleteForm={deleteForm}
@@ -197,6 +212,7 @@ const Content = () => {
           tipoAluminio = {tipoAluminio}
           tipoSatin = {tipoSatin}
           tipoVidrio = {tipoVidrio}
+          // isEditbudget={!!editId ? formItem: null}
         />
       ))}
       

@@ -1,6 +1,6 @@
 "use client";
 import { useState, React, useEffect } from "react";
-import CustomInput from "./assets/CustomInput";
+import CustomInput from "./ui/CustomInput";
 import { AiOutlineClose } from "react-icons/ai";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -32,20 +32,25 @@ useEffect(() => {
       setFormFields(updatedFormFields);
       return;
     }
-    const newSelectedWorkId = parseInt(target.value, 10);
+    const newSelectedWorkId = Number.parseInt(target.value, 10);
     const selectedTrabajo = trabajos.find(trabajo => trabajo.id == newSelectedWorkId);
+    // console.log(selectedTrabajo.herrajes)
     setSelectedHerrajes(selectedTrabajo?.herrajes);
     setSelectedPerfiles(selectedTrabajo?.perfiles);
     const updatedFormFields = {
       ...dataFields,
       trabajoId: newSelectedWorkId,
-      nombreTrabajo: selectedTrabajo?.nombre
+      nombreTrabajo: selectedTrabajo?.nombre,
+      perfiles: { ...formFields.perfiles, [0]:[formFields.perffiles] }
+      // perfiles: { [0]:selectedTrabajo.perfiles },
+      // herrajes: { [0]:selectedHerrajes.herrajes}
     };
     setFormFields(updatedFormFields);
     onDataChange(formId, updatedFormFields);
     return updatedFormFields;
   };
 
+  //To do: merge both perfil and herrajes handlers
   const handlePerfilChange = (target) => {
     const updatedFormFields = {
       ...formFields,
@@ -230,6 +235,7 @@ useEffect(() => {
           </select> */}
 
         </div>
+        
         <div>
         {formFields?.trabajoId !== null && formFields?.trabajoId !== '' &&(
           <> 

@@ -13,7 +13,7 @@ const links = [
     path: "/history",
   },
   {
-    name: "AddFormView",
+    name: "Nuevo trabajo",
     path: "/addformview",
   }
 ];

@@ -2,7 +2,7 @@
 import Formulary from "./Formulary";
 import { useState, useEffect } from "react";
 import TopDown from "./TopDown";
-import CustomInput from "./assets/CustomInput";
+import CustomInput from "./ui/CustomInput";
 
 const Content = () => {
   const [trabajos, setTrabajos] = useState([]);

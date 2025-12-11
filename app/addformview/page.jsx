@@ -22,8 +22,8 @@ function AddFormView() {
     aluminio: "",
     satin:"",
     vidrio: "",
-    herrajes: [],
-    perfiles: []
+    perfiles: [],
+    herrajes: []
   }])
 
   //Fetch data from APIs
@@ -110,43 +110,24 @@ function AddFormView() {
   }
   
   const validateForm = () => {
-    console.log("oña")
+    console.log("oña", formData)
 
     for( const data of formData){
       for(const [key, value] of Object.entries(data)){
-        console.log(`${key}: ${value}`, typeof(value));
+        console.log(`${key}: ${value}`, Object.keys(value).length == 0, ["perfiles", "herrajes"].includes(key),  Object.keys(value).length<1);
+        if( (value === "" || value === null ) && !["satin", "vidrio"].includes(key) || (["perfiles", "herrajes"].includes(key) && Object.keys(value).length== 0 )) {
+        // if(  !["satin", "vidrio", "aluminio", "linea"].includes(key) && (["perfiles", "herrajes"].includes(key) && Object.keys(value).length== 0 )) {
+          console.log(key, "is empty, check that");
+          return globalThis.alert(`El campo ${key} esta vacio, favor de llenarlo`); 
+        }
       }
     }
-    
-    // formData.forEach(data => {
-    //   for(const [key, value] of Object.entries(data)){
-    //     console.log(`${key}: ${value}`, );
-    //   }
-    // })
   }
   
   const saveFunction = () => {
     validateForm();
 
-    // formData.map(data => {
-    //   console.log(Array.isArray(data))
-    //   // for (const [key, value] of Object.entries(data)) {
-    //   //   if ((key === "" || key === null ) && !["satin", "vidrio"].includes(key) ) {
-    //   //     globalThis.alert(`El campo ${key} esta vacio, favor de llenarlo`);
-    //   //     return console.log(key, "is empty, check that");
-    //   //   }
-    //   //   console.log(typeof(key), Object.keys(key).length, key, value);
-    //   // }
-
-    // })
-    // for (const [key, value] of formData) {
-    //   if ((value === "" || value === null ) && !["satin", "vidrio"].includes(key) ) {
-    //     globalThis.alert(`El campo ${key} esta vacio, favor de llenarlo`);
-    //     return console.log(key, "is empty, check that");
-    //   }
-    //   console.log(typeof(key), Object.keys(key).length, key, value);
-    // }
-    console.log("before the loop")
+    console.log("before the loop = valid form")
   }
     
   useEffect(() => {

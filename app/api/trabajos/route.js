@@ -63,3 +63,16 @@ export async function GET(request) {
 
   return NextResponse.json(results)
 }
+
+export async function POST(NextRequest) {
+  const formsData = await NextRequest.json();
+
+  try{
+    console.log("Received data:", formsData);
+    return NextResponse.json({ message: "Data received successfully"},{ status: 200 });
+  }catch(error){
+    console.error("Error al recibir los datos:", error);
+    return NextResponse.json({ error: "Error al recibir los datos"}, {status: 500});
+  }
+
+}

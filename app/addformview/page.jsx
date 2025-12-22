@@ -110,24 +110,56 @@ function AddFormView() {
   }
   
   const validateForm = () => {
-    console.log("oña", formData)
 
     for( const data of formData){
       for(const [key, value] of Object.entries(data)){
-        console.log(`${key}: ${value}`, Object.keys(value).length == 0, ["perfiles", "herrajes"].includes(key),  Object.keys(value).length<1);
         if( (value === "" || value === null ) && !["satin", "vidrio"].includes(key) || (["perfiles", "herrajes"].includes(key) && Object.keys(value).length== 0 )) {
-        // if(  !["satin", "vidrio", "aluminio", "linea"].includes(key) && (["perfiles", "herrajes"].includes(key) && Object.keys(value).length== 0 )) {
           console.log(key, "is empty, check that");
-          return globalThis.alert(`El campo ${key} esta vacio, favor de llenarlo`); 
+          return {valid: false, field: key, message: `El campo ${key} esta vacio, favor de llenarlo`}
         }
       }
     }
+    return {valid: true};
   }
   
-  const saveFunction = () => {
-    validateForm();
+  async function saveFunction() {
+    const validation = validateForm();
+    if (!validation.valid) {
+      alert(validation.message);
+      return;
+    }
 
-    console.log("before the loop = valid form")
+    try{
+      const res = await fetch('/api/trabajos', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      // const data = await res.json();
+      if( res.status == 500){
+        console.log("Guardado no exitoso")
+        alert("Guardado no exitoso, checar consola");
+      }else if( res.status == 200){
+        console.log("Guardado exitoso")
+        alert("Guardado exitoso");
+      }
+
+      setFormData([{
+        Titulo: "",
+        linea: "",
+        aluminio: "",
+        satin:"",
+        vidrio: "",
+        perfiles: [],
+        herrajes: []
+      }]);
+
+    }catch(error){
+      console.log("Error at uploading trabajo", error)
+      
+    }
   }
     
   useEffect(() => {
@@ -136,172 +168,180 @@ function AddFormView() {
 
   return (
     <main className="container mx-auto px-4 py-6">
-      <div className="flex  items-center gap-4 mb-6">
-        <div className="relative w-[400px]">
-            <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value={formData.tittle} onChange={handleTituloChange} />
-            <label htmlFor="floating_outlined" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Titulo de trabajo:</label> 
-        </div>
-      </div>
 
-      <form className="border p-6 rounded shadow space-y-6">
-        {/* Select Línea */}
-        <div className="w-[400px]">
-          <Select value={formData[0].linea || ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona Línea" />
-            </SelectTrigger>
-            <SelectContent>
-              {lineas.map(({ id, linea }) => (
-                <SelectItem key={id} value={id}>
-                  {linea}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {formData.map((form, index) => (
+        <div key={index}> 
+        
+        <div className="flex  items-center gap-4 mb-6">
+          <div className="relative w-[400px]">
+              <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value={form.Titulo || ''} onChange={handleTituloChange} />
+              <label htmlFor="floating_outlined" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Titulo de trabajo:</label> 
+          </div>
         </div>
 
-        <div className="w-[400px]">
-          <Select value={formData[0].aluminio || ''} onValueChange={(value) => handleInputChange({ target: { id: "aluminio", value } })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona tipo de aluminio" />
-            </SelectTrigger>
-            <SelectContent>
-              {tipoAluminio.map(({ id, tipo_aluminio }) => (
-                <SelectItem key={id} value={id}>
-                  {tipo_aluminio}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <form className="border p-6 rounded shadow space-y-6">
+          {/* Select Línea */}
+          <div className="w-[400px]">
+            <Select value={form.linea || ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona Línea" />
+              </SelectTrigger>
+              <SelectContent>
+                {lineas.map(({ id, linea }) => (
+                  <SelectItem key={id} value={id}>
+                    {linea}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="w-[400px]">
-          <Select value={formData[0].satin || ''} onValueChange={(value) => handleInputChange({ target: { id: "satin", value } })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona tipo de satin" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='0'> No aplica</SelectItem>
-              {tipoSatin.map(({ id, tipo_satin }) => (
-                <SelectItem key={id} value={id}>
-                  {tipo_satin}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="w-[400px]">
+            <Select value={form.aluminio || ''} onValueChange={(value) => handleInputChange({ target: { id: "aluminio", value } })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona tipo de aluminio" />
+              </SelectTrigger>
+              <SelectContent>
+                {tipoAluminio.map(({ id, tipo_aluminio }) => (
+                  <SelectItem key={id} value={id}>
+                    {tipo_aluminio}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="w-[400px]">
-          <Select value={formData[0].vidrio || ''} onValueChange={(value) => handleInputChange({ target: { id: "vidrio", value } })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona tipo de vidrio" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='0'> No aplica</SelectItem>
-              {tipoVidrio.map(({ id, tipo_vidrio }) => (
-                <SelectItem key={id} value={id}>
-                  {tipo_vidrio}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="w-[400px]">
+            <Select value={form.satin || ''} onValueChange={(value) => handleInputChange({ target: { id: "satin", value } })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona tipo de satin" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='0'> No aplica</SelectItem>
+                {tipoSatin.map(({ id, tipo_satin }) => (
+                  <SelectItem key={id} value={id}>
+                    {tipo_satin}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div>
-          <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
-          <div className="flex gap-2">
+          <div className="w-[400px]">
+            <Select value={form.vidrio || ''} onValueChange={(value) => handleInputChange({ target: { id: "vidrio", value } })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona tipo de vidrio" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='0'> No aplica</SelectItem>
+                {tipoVidrio.map(({ id, tipo_vidrio }) => (
+                  <SelectItem key={id} value={id}>
+                    {tipo_vidrio}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {numItems.perfiles.map(numperfil => (
-            
-            <div className="relative w-[400px]" key={numperfil}>
+          <div>
+            <h2 className="font-bold mt-4 mb-2">PERFILES DE ALUMINIO</h2>
+            <div className="flex gap-2">
 
-              <Select onValueChange={(value) => handleInputChange({target: {id: "perfil",num: numperfil , value}})}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Perfiles" />
-                </SelectTrigger>
-                <SelectContent>
-                  {perfiles.map((perfil) => (
-                    <SelectItem value={perfil.perfil_id} key={perfil.perfil_id}>{perfil.perfil_id} | {perfil.perfil_nombre}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {numItems.perfiles.map(numperfil => (
               
-              <label
-                htmlFor="select_perfiles"
-                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 
-                       scale-75 top-2 z-0 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 
-                       peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
-                       peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
-                       peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 
-                       rtl:peer-focus:left-auto start-1"
-              >
-                Perfil
-              </label>
-            </div>
-            
-          ))}
-          
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
-              aria-label="Agregar perfil"
-              onClick={() => addItem('perfiles')}
-            >
-              <FaPlus size={16} />
-            </Button>
-          </div>
-        </div>
+              <div className="relative w-[400px]" key={numperfil}>
 
-        {/* Herrajes y accesorios */}
-        <div>
-          <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
-          <div className="flex gap-2">
-            {numItems.herrajes.map(numherraje => (
-
-            <div className="relative w-[400px]" key={numherraje}>
-
-              <Select onValueChange={(value) => handleInputChange({target: {id: "herraje", num: numherraje, value}})}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Herrajes y accesorios" />
-                </SelectTrigger>
-                <SelectContent>
-                  {herrajes.map((herraje) => (
-                    <SelectItem value={herraje.herraje_id} key={herraje.herraje_id}>{herraje.herraje_id} | {herraje.herraje_nombre}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <label
-                htmlFor="select_herrajes"
-                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 
-                       scale-75 top-2 z-0 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 
-                       peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
-                       peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
-                       peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 
-                       rtl:peer-focus:left-auto start-1"
-              >
-                Herraje
-              </label>
-            </div>
-
+                <Select onValueChange={(value) => handleInputChange({target: {id: "perfil",num: numperfil , value}})}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Perfiles" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {perfiles.map((perfil) => (
+                      <SelectItem value={perfil.perfil_id} key={perfil.perfil_id}>{perfil.perfil_id} | {perfil.perfil_nombre}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <label
+                  htmlFor="select_perfiles"
+                  className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 
+                        scale-75 top-2 z-0 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 
+                        peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                        peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
+                        peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 
+                        rtl:peer-focus:left-auto start-1"
+                >
+                  Perfil
+                </label>
+              </div>
+              
             ))}
-
-
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
-              aria-label="Agregar herraje"
-              onClick={() => addItem('herrajes')}
-            >
-              <FaPlus size={16} />
-            </Button>
+            
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+                aria-label="Agregar perfil"
+                onClick={() => addItem('perfiles')}
+              >
+                <FaPlus size={16} />
+              </Button>
+            </div>
           </div>
+
+          {/* Herrajes y accesorios */}
+          <div>
+            <h2 className="font-bold mt-4 mb-2">HERRAJES Y ACCESORIOS</h2>
+            <div className="flex gap-2">
+              {numItems.herrajes.map(numherraje => (
+
+              <div className="relative w-[400px]" key={numherraje}>
+
+                <Select onValueChange={(value) => handleInputChange({target: {id: "herraje", num: numherraje, value}})}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Herrajes y accesorios" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {herrajes.map((herraje) => (
+                      <SelectItem value={herraje.herraje_id} key={herraje.herraje_id}>{herraje.herraje_id} | {herraje.herraje_nombre}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <label
+                  htmlFor="select_herrajes"
+                  className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 
+                        scale-75 top-2 z-0 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 
+                        peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                        peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
+                        peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 
+                        rtl:peer-focus:left-auto start-1"
+                >
+                  Herraje
+                </label>
+              </div>
+
+              ))}
+
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+                aria-label="Agregar herraje"
+                onClick={() => addItem('herrajes')}
+              >
+                <FaPlus size={16} />
+              </Button>
+            </div>
+          </div>
+        </form>
+
+        
         </div>
-      </form>
+      ))}
       
       <div className="mt-7 justify-end">
         <div className="flex items-center gap-2">

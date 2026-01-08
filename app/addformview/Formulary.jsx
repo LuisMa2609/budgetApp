@@ -4,66 +4,100 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FaPlus } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 
-const Formulary = ({ form, fetchedData}) => {
+const Formulary = ({ form, fetchedData, onFormChange}) => {
     
     const {perfiles, herrajes, lineas, tipoAluminio, tipoSatin, tipoVidrio} = fetchedData;
     const [numItems, setNumItems] = useState({
         perfiles: [1],
         herrajes: [1]
     });
-    const [formData, setFormData] = useState([]);
+    const [formData, setFormData] = useState(form);
     // console.log("Formulary form prop: ", formData);
 
-    useEffect(() => {
-        setFormData([form])
-    },[form])
+    // useEffect(() => {
+    //     setFormData([form])
+    // },[form])
 
-    useEffect(() => {
-        console.log(formData);
-    })
+    // useEffect(() => {
+    //     console.log(typeof formData, formData);
+    // })
     
-  const handleInputChange = (e) => {
-    const target = e?.target;
-  //Form array update
-    setFormData(prevForm => {
-      const {id} = target;
+    
+    
+    const handleInputChange = (e) => {
+        const target = e?.target;
+        const {id} = target;
+    //Form array update
 
-      if(id == "perfil" || id == "herraje"){
-        const key = id === 'perfil' ? 'perfiles' : 'herrajes';
-        const updatedData = (
-          prevForm.map(form => ({
-            ...form,
-            [key]: {
-              ...(form[key]),
-              [target.num]: target.value
-            }
-          }))
-        )
-        return updatedData;
-      }
-      const value = Number.parseInt(target.value, 10)
+        if(id == "perfil" || id == "herraje"){
+            const key = id === 'perfil' ? 'perfiles' : 'herrajes';
+            const updatedData = ({
+                ...formData,
+                [key]: {
+                    ...(formData[key]),
+                    [target.num]: target.value
+                }
+                })
 
-        const updatedData = (
-          prevForm.map(form => ({
-            ...form,
+            return setFormData(updatedData);
+        }
+
+        const value = Number.parseInt(target.value, 10)    
+        const updatedFields = ({
+            ...formData,
             [id]: value
-          }))
-        )
+        }) 
 
-      return updatedData;
-    })
-  };
-  
-  const handleTituloChange = (e)=>{
-    const value = e.target.value;
+        return setFormData(updatedFields);
+    
+        // setFormData(prevForm => {
+        //   const {id} = target;
 
-    setFormData(prevForms =>
-      prevForms.map(formdata => ({
-        ...formdata,
-        Titulo: value
-      }))
-    );
-  }
+        //   if(id == "perfil" || id == "herraje"){
+        //     const key = id === 'perfil' ? 'perfiles' : 'herrajes';
+        //     const updatedData = (
+        //       prevForm.map(form => ({
+        //         ...form,
+        //         [key]: {
+        //           ...(form[key]),
+        //           [target.num]: target.value
+        //         }
+        //       }))
+        //     )
+        //     return updatedData;
+        //   }
+        //   const value = Number.parseInt(target.value, 10)
+
+        //     const updatedData = (
+        //       prevForm.map(form => ({
+        //         ...form,
+        //         [id]: value
+        //       }))
+        //     )
+
+        //   return updatedData;
+        // })
+    };
+    
+    const handleTituloChange = (e)=>{
+        const value = e.target.value;
+
+        const updatedFields = ({
+            ...formData,
+            Titulo: value
+        });
+        
+        console.log("Updated Data:", updatedFields);
+
+        setFormData(updatedFields);
+
+        // setFormData(prevForms =>
+        //   prevForms.map(formdata => ({
+        //     ...formdata,
+        //     Titulo: value
+        //   }))
+        // );
+    }
   
   const addItem = (type) => {
     setNumItems(prevNumItems => ({

@@ -75,6 +75,15 @@ function AddFormView() {
   }, [])
 
   //Handle input changes
+  //TODO fix this update to call updatedFields from child component whenever the saveFunction is called
+  const handleUpdatedFields = (index, updatedForm) => {
+    setFormData(prevFormData => {
+      const newFormData = [...prevFormData];
+      newFormData[index] = updatedForm;
+      return newFormData;
+    });
+  }
+  
   const validateForm = () => {
 
     for( const data of formData){
@@ -89,6 +98,7 @@ function AddFormView() {
   }
   
   async function saveFunction() {
+    handleUpdatedFields();
     const validation = validateForm();
     if (!validation.valid) {
       alert(validation.message);
@@ -128,9 +138,9 @@ function AddFormView() {
     }
   }
     
-  // useEffect(() => {
-  //   console.log("Form Data updated: ", formData);
-  // }, [formData]);
+  useEffect(() => {
+    console.log("Form Data updated: ", formData);
+  }, [formData]);
 
   return (
     <main className="container mx-auto px-4 py-6">
@@ -141,6 +151,8 @@ function AddFormView() {
           <Formulary 
           form={form}
           fetchedData={fetchedData}
+          // onFormChange={(updatedForm) => handleUpdatedFields(form.id - 1, updatedForm)}
+          onFormChange={handleUpdatedFields}
           />
         
         </div>

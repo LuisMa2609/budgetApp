@@ -12,8 +12,7 @@ const Formulary = ({formId, onDataChange, deleteForm, formLength, trabajos, data
   const [selectedPerfiles, setSelectedPerfiles] = useState([]);
 
 useEffect(() => {
-  console.log("formFields", formFields)
-  console.log("formFields.linea", formFields.linea)
+  console.log("formFields", formFields, "type:", Array.isArray(dataFields));
 })
   
   useEffect(() => {

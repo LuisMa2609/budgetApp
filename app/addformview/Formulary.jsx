@@ -11,58 +11,90 @@ const Formulary = ({ form, fetchedData}) => {
         perfiles: [1],
         herrajes: [1]
     });
-    const [formData, setFormData] = useState([]);
+    const [formData, setFormData] = useState(form);
     // console.log("Formulary form prop: ", formData);
 
-    useEffect(() => {
-        setFormData([form])
-    },[form])
+    // useEffect(() => {
+    //     setFormData([form])
+    // },[form])
 
     useEffect(() => {
-        console.log(formData);
+        console.log(typeof formData, formData);
     })
     
   const handleInputChange = (e) => {
     const target = e?.target;
+    const {id} = target;
   //Form array update
-    setFormData(prevForm => {
-      const {id} = target;
 
-      if(id == "perfil" || id == "herraje"){
+    if(id == "perfil" || id == "herraje"){
         const key = id === 'perfil' ? 'perfiles' : 'herrajes';
-        const updatedData = (
-          prevForm.map(form => ({
-            ...form,
+        const updatedData = ({
+            ...formData,
             [key]: {
-              ...(form[key]),
-              [target.num]: target.value
+                ...(formData[key]),
+                [target.num]: target.value
             }
-          }))
-        )
-        return updatedData;
-      }
-      const value = Number.parseInt(target.value, 10)
+            })
 
-        const updatedData = (
-          prevForm.map(form => ({
-            ...form,
-            [id]: value
-          }))
-        )
+        return setFormData(updatedData);
+    }
 
-      return updatedData;
-    })
+    const value = Number.parseInt(target.value, 10)    
+    const updatedFields = ({
+        ...formData,
+        [id]: value
+    }) 
+
+    return setFormData(updatedFields);
+  
+    // setFormData(prevForm => {
+    //   const {id} = target;
+
+    //   if(id == "perfil" || id == "herraje"){
+    //     const key = id === 'perfil' ? 'perfiles' : 'herrajes';
+    //     const updatedData = (
+    //       prevForm.map(form => ({
+    //         ...form,
+    //         [key]: {
+    //           ...(form[key]),
+    //           [target.num]: target.value
+    //         }
+    //       }))
+    //     )
+    //     return updatedData;
+    //   }
+    //   const value = Number.parseInt(target.value, 10)
+
+    //     const updatedData = (
+    //       prevForm.map(form => ({
+    //         ...form,
+    //         [id]: value
+    //       }))
+    //     )
+
+    //   return updatedData;
+    // })
   };
   
   const handleTituloChange = (e)=>{
     const value = e.target.value;
 
-    setFormData(prevForms =>
-      prevForms.map(formdata => ({
-        ...formdata,
+    const updatedFields = ({
+        ...formData,
         Titulo: value
-      }))
-    );
+    });
+    
+    console.log("Updated Data:", updatedFields);
+
+    setFormData(updatedFields);
+
+    // setFormData(prevForms =>
+    //   prevForms.map(formdata => ({
+    //     ...formdata,
+    //     Titulo: value
+    //   }))
+    // );
   }
   
   const addItem = (type) => {

@@ -1,19 +1,27 @@
 'use client';
-import React from "react";
-import { useState, useEffect} from "react";
+import { useState, useEffect, React} from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FaPlus } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 
 const Formulary = ({ form, fetchedData}) => {
+    
     const {perfiles, herrajes, lineas, tipoAluminio, tipoSatin, tipoVidrio} = fetchedData;
     const [numItems, setNumItems] = useState({
         perfiles: [1],
         herrajes: [1]
     });
-    const [formData, setFormData] = useState([form]);
-    console.log("Formulary form prop: ", formData);
+    const [formData, setFormData] = useState([]);
+    // console.log("Formulary form prop: ", formData);
 
+    useEffect(() => {
+        setFormData([form])
+    },[form])
+
+    useEffect(() => {
+        console.log(formData);
+    })
+    
   const handleInputChange = (e) => {
     const target = e?.target;
   //Form array update
@@ -70,14 +78,14 @@ const Formulary = ({ form, fetchedData}) => {
 
             <div className="flex  items-center gap-4 mb-6">
                 <div className="relative w-[400px]">
-                    <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value={form.Titulo || ''} onChange={handleTituloChange} />
+                    <input type="text" id="floating_outlined" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value={formData.Titulo || ''} onChange={handleTituloChange} />
                     <label htmlFor="floating_outlined" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Titulo de trabajo:</label> 
                 </div>
             </div>
 
             <form className="border p-6 rounded shadow space-y-6">
                 <div className="w-[400px]">
-                    <Select value={form.linea || ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
+                    <Select value={formData.linea || ''} onValueChange={(value) => handleInputChange({ target: { id: "linea", value } })}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona Línea" />
                     </SelectTrigger>
@@ -92,7 +100,7 @@ const Formulary = ({ form, fetchedData}) => {
                 </div>
 
                 <div className="w-[400px]">
-                    <Select value={form.aluminio || ''} onValueChange={(value) => handleInputChange({ target: { id: "aluminio", value } })}>
+                    <Select value={formData.aluminio || ''} onValueChange={(value) => handleInputChange({ target: { id: "aluminio", value } })}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona tipo de aluminio" />
                     </SelectTrigger>
@@ -107,7 +115,7 @@ const Formulary = ({ form, fetchedData}) => {
                 </div>
 
                 <div className="w-[400px]">
-                    <Select value={form.satin || ''} onValueChange={(value) => handleInputChange({ target: { id: "satin", value } })}>
+                    <Select value={formData.satin || ''} onValueChange={(value) => handleInputChange({ target: { id: "satin", value } })}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona tipo de satin" />
                     </SelectTrigger>
@@ -123,7 +131,7 @@ const Formulary = ({ form, fetchedData}) => {
                 </div>
 
                 <div className="w-[400px]">
-                    <Select value={form.vidrio || ''} onValueChange={(value) => handleInputChange({ target: { id: "vidrio", value } })}>
+                    <Select value={formData.vidrio || ''} onValueChange={(value) => handleInputChange({ target: { id: "vidrio", value } })}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona tipo de vidrio" />
                     </SelectTrigger>

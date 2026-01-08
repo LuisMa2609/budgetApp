@@ -135,8 +135,8 @@ function AddFormView() {
   return (
     <main className="container mx-auto px-4 py-6">
 
-      {formData.map((form, index) => (
-        <div key={index}> 
+      {formData.map(form => (
+        <div key={form.id}> 
 
           <Formulary 
           form={form}
